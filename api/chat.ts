@@ -63,13 +63,24 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const hasAnthropic = !!process.env.ANTHROPIC_API_KEY;
-    const hasGemini = !!process.env.GEMINI_API_KEY;
+    const hasAnthropic = !!process.env.ANTHROPIC_API_KEY && 
+                         process.env.ANTHROPIC_API_KEY !== 'undefined' && 
+                         process.env.ANTHROPIC_API_KEY !== 'null' && 
+                         process.env.ANTHROPIC_API_KEY.trim() !== '' &&
+                         !process.env.ANTHROPIC_API_KEY.startsWith('dummy') &&
+                         !process.env.ANTHROPIC_API_KEY.includes('YOUR');
+
+    const hasGemini = !!process.env.GEMINI_API_KEY && 
+                      process.env.GEMINI_API_KEY !== 'undefined' && 
+                      process.env.GEMINI_API_KEY !== 'null' && 
+                      process.env.GEMINI_API_KEY.trim() !== '' &&
+                      !process.env.GEMINI_API_KEY.startsWith('dummy') &&
+                      !process.env.GEMINI_API_KEY.includes('YOUR');
 
     if (!hasAnthropic && !hasGemini) {
-      return res.status(500).json({
-        reply: "Signal is a bit weak right now — API keys are not configured. Try again or hit [CALL US NOW] to skip straight to a human.",
-        error: "Missing ANTHROPIC_API_KEY and GEMINI_API_KEY."
+      return res.json({
+        reply: "📡 DISPATCH [SIGNAL DEGRADED]: AI credentials are currently unconfigured or invalid. To bypass the terminal, connect directly to our dispatcher: dial +91 - 9099906631 or email contact@sosagency.in.",
+        error: "Missing or invalid ANTHROPIC_API_KEY and GEMINI_API_KEY."
       });
     }
 
@@ -105,7 +116,7 @@ export default async function handler(req: any, res: any) {
         console.error('Anthropic API Call Failed, falling back to Gemini if available:', anthropicError.message);
         if (!hasGemini) {
           return res.json({
-            reply: "Signal's a bit weak right now — try again, or hit [CALL US NOW] to skip straight to a human.",
+            reply: "📡 DISPATCH [SIGNAL FAULT]: Direct channel failed. Dial +91 - 9099906631 or email contact@sosagency.in for human support.",
             error: anthropicError.message
           });
         }
@@ -171,8 +182,8 @@ export default async function handler(req: any, res: any) {
 
   } catch (err: any) {
     console.error('Chat API Error:', err);
-    return res.status(500).json({
-      reply: "Signal's a bit weak right now — try again, or hit [CALL US NOW] to skip straight to a human.",
+    return res.json({
+      reply: "📡 DISPATCH [SIGNAL DEGRADED]: High traffic is temporarily affecting automated systems. Direct bypass recommended: call +91 - 9099906631 or email contact@sosagency.in.",
       error: err.message
     });
   }
