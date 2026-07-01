@@ -53,6 +53,10 @@ export default function App() {
   // Selected case file inside the terminal case system
   const [selectedCaseId, setSelectedCaseId] = useState<string>('case-01');
 
+  // Guided onboarding animation tour state
+  const [isTourRunning, setIsTourRunning] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+
   // Unified scroll helper to keep messages fully visible
   const forceScrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
     // Delay slightly to allow layout changes (like going full screen or adding message nodes) to complete
@@ -108,6 +112,26 @@ export default function App() {
       return () => clearTimeout(timer);
     }
   }, [bootStep]);
+
+  // Run high-tempo guided system tour animation sequence (lasting ~3.6 seconds total: 900ms per step)
+  useEffect(() => {
+    if (!isTourRunning) return;
+    const interval = setInterval(() => {
+      setTourStep((prev) => {
+        if (prev >= 3) {
+          clearInterval(interval);
+          // Auto terminate tour after the final check phase
+          setTimeout(() => {
+            setIsTourRunning(false);
+            setTourStep(0);
+          }, 900);
+          return 3;
+        }
+        return prev + 1;
+      });
+    }, 900);
+    return () => clearInterval(interval);
+  }, [isTourRunning]);
 
   // Utility to generate dynamic timestamps
   const getTimestamp = () => {
@@ -272,6 +296,20 @@ export default function App() {
           <p className="font-mono text-xs md:text-sm text-neutral-300 mt-3 max-w-xl mx-auto leading-relaxed">
             Connect immediately to Dispatch, our senior creative AI agent, trained to triage identity, positioning, and visual debt under high pressure.
           </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <button
+              type="button"
+              id="watch-walkthrough-btn"
+              onClick={() => {
+                setIsTourRunning(true);
+                setTourStep(0);
+              }}
+              className="inline-flex items-center gap-2 bg-black hover:bg-[#FF3B30] border-2 border-[#FF3B30] text-white font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider px-5 py-2.5 transition-all duration-300 active:scale-95 cursor-pointer shadow-[0_0_15px_rgba(255,59,48,0.3)] hover:shadow-[0_0_25px_rgba(255,59,48,0.6)]"
+            >
+              <Terminal size={14} className="animate-pulse text-[#FF3B30]" />
+              <span>[ 📟 WATCH 3-SEC SYSTEM WALKTHROUGH ]</span>
+            </button>
+          </div>
         </div>
 
         {/* distress-terminal Wrapper */}
@@ -1174,6 +1212,159 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* ⚡ IMMERSIVE GUIDED WORKFLOW TOUR OVERLAY */}
+      <AnimatePresence>
+        {isTourRunning && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            id="guided-tour-overlay"
+            className="fixed inset-0 bg-[#070707]/98 backdrop-blur-md z-[10000] flex flex-col items-center justify-center p-4 md:p-8 select-none"
+          >
+            {/* Ambient Red Grid Background */}
+            <div className="absolute inset-0 bg-scanlines opacity-25 pointer-events-none" />
+
+            <div className="w-full max-w-2xl bg-[#0F0F0F] border-2 border-[#FF3B30] relative overflow-hidden flex flex-col shadow-[0_0_50px_rgba(255,59,48,0.35)] rounded-none">
+              {/* Terminal Header */}
+              <div className="flex items-center justify-between px-4 py-3 bg-neutral-950 border-b border-neutral-900 font-mono text-[10px] md:text-xs">
+                <div className="flex items-center gap-2 text-[#FF3B30] font-bold">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF3B30] animate-ping" />
+                  <span>SOS DISPATCH SIMULATOR SYSTEM // ONLINE</span>
+                </div>
+                <div className="text-neutral-500 font-bold uppercase tracking-wider">
+                  STAGE {tourStep + 1} OF 4
+                </div>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="w-full bg-neutral-950 h-1 relative">
+                <motion.div
+                  initial={{ width: '0%' }}
+                  animate={{ width: `${((tourStep + 1) / 4) * 100}%` }}
+                  transition={{ duration: 0.9, ease: 'linear' }}
+                  className="absolute h-full bg-[#FF3B30]"
+                />
+              </div>
+
+              {/* Interactive Slide Viewer */}
+              <div className="p-6 md:p-10 flex-1 flex flex-col justify-center min-h-[300px]">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={tourStep}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-5"
+                  >
+                    {tourStep === 0 && (
+                      <div className="space-y-4">
+                        <div className="inline-block bg-red-950/40 border border-red-900/30 text-[#FF3B30] text-[9px] font-mono uppercase px-2.5 py-0.5 font-bold tracking-widest">
+                          📟 SYSTEM STAGE 01: REPORT TRAUMA
+                        </div>
+                        <h3 className="font-sans text-xl md:text-2xl font-black text-white uppercase tracking-tight">
+                          ENGAGE WITH AUTOMATED DISPATCH
+                        </h3>
+                        <p className="font-mono text-xs md:text-sm text-neutral-400 leading-relaxed">
+                          Your brand identity is in critical failure mode. Open the transceiver to immediately stream diagnosis questions to our experienced creative director AI.
+                        </p>
+                        
+                        {/* Interactive UI Mock */}
+                        <div className="bg-[#080808] border border-neutral-900 p-4 font-mono text-[10px] md:text-xs space-y-2.5 rounded-none">
+                          <div className="text-neutral-500 text-[9px] border-b border-neutral-900 pb-1.5 flex justify-between">
+                            <span>UPLINK STREAM // CHAT TRANSMISSION</span>
+                            <span className="animate-pulse text-[#FF3B30]">● SIGNAL CAPTURING</span>
+                          </div>
+                          <div className="text-neutral-300"><span className="text-[#FF3B30] font-bold">&gt; BRAND OWNER:</span> "We're launching in 3 weeks and have absolutely nothing."</div>
+                          <div className="text-green-400"><span className="text-[#FF3B30] font-extrabold">&gt; DISPATCH:</span> "Understood. Commencing Rescue Sprint protocol. Hold secure line."</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {tourStep === 1 && (
+                      <div className="space-y-4">
+                        <div className="inline-block bg-red-950/40 border border-red-900/30 text-[#FF3B30] text-[9px] font-mono uppercase px-2.5 py-0.5 font-bold tracking-widest">
+                          📁 SYSTEM STAGE 02: REVIEW THE ARCHIVES
+                        </div>
+                        <h3 className="font-sans text-xl md:text-2xl font-black text-white uppercase tracking-tight">
+                          SCRUTINIZE CLASSIFIED CASES
+                        </h3>
+                        <p className="font-mono text-xs md:text-sm text-neutral-400 leading-relaxed">
+                          Analyze real-world branding trauma reports from high-stakes clients. Each case lists incident diagnoses, response times, and interactive geometric brand designs.
+                        </p>
+
+                        {/* Interactive UI Mock */}
+                        <div className="bg-[#080808] border border-neutral-900 p-4 font-mono text-[10px] md:text-xs space-y-2.5 rounded-none">
+                          <div className="text-neutral-500 text-[9px] border-b border-neutral-900 pb-1.5 flex justify-between">
+                            <span>CLASSIFIED RECORDS // CASES SYSTEM</span>
+                            <span>INDEX: 002 // STABILIZED</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-white font-black uppercase tracking-wider text-xs">SOLAS CLINICAL INCIDENT</span>
+                            <span className="text-green-500 font-bold bg-green-950/20 px-2 py-0.5 border border-green-900/30 text-[9px]">OUTCOME 98%</span>
+                          </div>
+                          <div className="text-neutral-400 text-[10px] leading-relaxed uppercase">
+                            DIAGNOSIS: Overly technical design was triggering user detachment.
+                            REMEDY: Structured warm, empathetic design ruleset in 2 weeks flat.
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {tourStep === 2 && (
+                      <div className="space-y-4">
+                        <div className="inline-block bg-red-950/40 border border-red-900/30 text-[#FF3B30] text-[9px] font-mono uppercase px-2.5 py-0.5 font-bold tracking-widest">
+                          ☎️ SYSTEM STAGE 03: HUMAN DIRECT ESCALATION
+                        </div>
+                        <h3 className="font-sans text-xl md:text-2xl font-black text-white uppercase tracking-tight">
+                          DIAL OR TRANSMIT DIRECTLY
+                        </h3>
+                        <p className="font-mono text-xs md:text-sm text-neutral-400 leading-relaxed">
+                          For total disasters, bypass the automated triage completely. Connect instantly via secure digital email or direct dial our 24/7/365 emergency paramedic line.
+                        </p>
+
+                        {/* Interactive UI Mock */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="bg-black border border-neutral-900 p-4 text-center">
+                            <span className="text-[9px] text-neutral-500 block mb-1 uppercase tracking-widest font-bold">DIRECT HOTLINE</span>
+                            <span className="text-[#FF3B30] font-black text-xs md:text-sm tracking-widest">+91 - 9099906631</span>
+                          </div>
+                          <div className="bg-black border border-neutral-900 p-4 text-center">
+                            <span className="text-[9px] text-neutral-500 block mb-1 uppercase tracking-widest font-bold">SECURE EMAIL</span>
+                            <span className="text-[#FF3B30] font-black text-xs md:text-sm tracking-wider">contact@sosagency.in</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {tourStep === 3 && (
+                      <div className="space-y-4 text-center py-4">
+                        <div className="w-14 h-14 bg-[#FF3B30]/10 border-2 border-[#FF3B30] rounded-full flex items-center justify-center mx-auto mb-2 animate-bounce">
+                          <CheckCircle className="text-[#FF3B30]" size={28} />
+                        </div>
+                        <h3 className="font-sans text-xl md:text-2xl font-black text-white uppercase tracking-tight">
+                          PROTOCOL SYNCHRONIZED
+                        </h3>
+                        <p className="font-mono text-xs md:text-sm text-neutral-400 max-w-md mx-auto leading-relaxed">
+                          You are now fully certified to operate the distress systems. Commencing immediate telemetry connection.
+                        </p>
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Status bar */}
+              <div className="bg-neutral-950 border-t border-neutral-900 px-4 py-3 flex justify-between items-center font-mono text-[9px] text-neutral-500">
+                <span>SIMULATION_TICKS: {Math.floor(Date.now() / 1000)}</span>
+                <span className="animate-pulse text-[#FF3B30] font-bold uppercase tracking-widest">LOADING PLATFORM...</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
