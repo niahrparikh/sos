@@ -19,6 +19,7 @@ import LogoMarquee from './components/LogoMarquee';
 import ProcessStep from './components/ProcessStep';
 import TestimonialCard from './components/TestimonialCard';
 import PrimaryButton from './components/PrimaryButton';
+import Logo from './components/Logo';
 
 export default function App() {
   // Terminal states
@@ -224,10 +225,7 @@ export default function App() {
           HEADER BAR
           ═══════════════════════════════════════ */}
       <header className="sticky top-0 z-50 bg-[#0A0A0A] border-b border-neutral-900 px-4 py-3.5 md:px-8 flex justify-between items-center select-none shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-white text-[#8B0000] font-black flex items-center justify-center text-xl">S</div>
-          <span className="text-xl tracking-tighter font-bold uppercase italic text-white">SOS AGENCY</span>
-        </div>
+        <Logo dotSize="w-3 h-3 md:w-3.5 md:h-3.5" textSize="text-lg md:text-xl" />
 
         <div className="flex items-center gap-6">
           <div className="text-[10px] opacity-60 tracking-[0.2em] text-right uppercase text-white/80 hidden sm:block">
@@ -289,6 +287,7 @@ export default function App() {
               onMaximize={() => setTerminalState('maximized')}
             >
               <div className="flex-1 flex flex-col items-center justify-center text-center p-6 space-y-4 select-none">
+                <Logo dotSize="w-4 h-4 animate-bounce" textSize="text-2xl" className="mb-2" />
                 <div className="text-[#FF3B30] font-mono text-xs animate-pulse">● SIGNAL TERMINATED — OPERATOR DISCONNECTED</div>
                 <h3 className="font-mono text-base md:text-lg font-bold text-white uppercase tracking-wider">UPLINK CONNECTION OFFLINE</h3>
                 <p className="font-mono text-xs text-neutral-400 max-w-sm leading-relaxed">
@@ -315,9 +314,10 @@ export default function App() {
               className="w-full bg-[#0A0A0A] border-l-4 border-[#FF3B30] border-r border-t border-b border-neutral-900 p-4 flex justify-between items-center select-none cursor-pointer hover:bg-neutral-900 transition-all shadow-[0_15px_40px_rgba(0,0,0,0.8)]"
             >
               <div className="flex items-center gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#FFCC00] animate-pulse" />
-                <span className="font-mono text-[10px] md:text-xs text-neutral-300 font-bold uppercase tracking-widest">
-                  DISTRESS TERMINAL SIGNAL SUSPENDED (MINIMIZED)
+                <Logo dotSize="w-2.5 h-2.5" textSize="text-xs" className="scale-95 mr-1" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FFCC00] animate-pulse shrink-0" />
+                <span className="font-mono text-[10px] md:text-xs text-neutral-400 uppercase tracking-widest">
+                  SIGNAL SUSPENDED (MINIMIZED)
                 </span>
               </div>
               <button
@@ -447,19 +447,26 @@ export default function App() {
                         {/* Chat messages viewport */}
                         <div
                           ref={chatContainerRef}
-                          className="flex-1 overflow-y-auto pr-1 space-y-3.5 terminal-scrollbar pb-4"
+                          className="flex-1 overflow-y-auto pr-1 terminal-scrollbar pb-4 relative"
                         >
-                          {messages.map((msg, index) => (
-                            <ChatMessage
-                              key={msg.id}
-                              role={msg.role}
-                              content={msg.content}
-                              timestamp={msg.timestamp}
-                              isNew={index === messages.length - 1}
-                            />
-                          ))}
-                          
-                          {isTyping && <TypingIndicator />}
+                          {/* Ambient Logo Watermark */}
+                          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none z-0">
+                            <Logo dotSize="w-16 h-16" textSize="text-5xl md:text-6xl" tracking="tracking-widest" />
+                          </div>
+
+                          <div className="relative z-10 space-y-3.5 pr-1">
+                            {messages.map((msg, index) => (
+                              <ChatMessage
+                                key={msg.id}
+                                role={msg.role}
+                                content={msg.content}
+                                timestamp={msg.timestamp}
+                                isNew={index === messages.length - 1}
+                              />
+                            ))}
+                            
+                            {isTyping && <TypingIndicator />}
+                          </div>
                           <div ref={chatEndRef} />
                         </div>
 
@@ -1088,11 +1095,7 @@ export default function App() {
           
           {/* Col 1: Bio */}
           <div className="md:col-span-2">
-            <div className="text-white font-black tracking-tighter text-xl mb-4 flex items-center gap-2">
-              <span className="text-[#FF3B30] animate-pulse">●</span>
-              <span className="tracking-widest font-extrabold text-[#FF3B30]">SOS</span>
-              <span className="text-neutral-500 font-normal">AGENCY</span>
-            </div>
+            <Logo className="mb-4" dotSize="w-3.5 h-3.5" textSize="text-xl" />
             <p className="font-mono text-xs leading-relaxed text-neutral-500 max-w-sm">
               We are a premium creative & positioning agency. We do not do "rebranding cycles" or visual posturing. We operate like paramedics to deliver extreme branding.
             </p>
