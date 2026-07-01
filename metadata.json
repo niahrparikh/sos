@@ -1,0 +1,6 @@
+{
+  "name": "SOS Agency",
+  "description": "Branding & creative agency emergency terminal interface featuring an AI dispatch operator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
