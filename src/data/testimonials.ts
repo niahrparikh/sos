@@ -2,6 +2,12 @@ import { Testimonial } from '../types';
 
 export const TESTIMONIALS: Testimonial[] = [
   {
+    id: 'test-velluxia',
+    quote: "Standard agency proposals were dull, clinical, and sterile. SOS Agency understood our Korean Dermatology roots and translated them with a beautiful, high-concept editorial structure tailored for Indian skin. Absolutely stunning work.",
+    client: "Aarav Sharma",
+    role: "Co-Founder, Velluxia"
+  },
+  {
     id: 'test-01',
     quote: "Our brand doesn't just feel like us now — it feels like the version of us we were always afraid to show. The emergency sprint saved our series B launch.",
     client: "Sarah Jenkins",

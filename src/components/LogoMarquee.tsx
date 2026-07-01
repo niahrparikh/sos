@@ -5,6 +5,7 @@ interface LogoMarqueeProps {
 }
 
 const BRAND_LOGOS = [
+  { name: 'VELLUXIA', text: '✴ VELLUXIA' },
   { name: 'APEX_FIN', text: 'APEX // CAPITAL' },
   { name: 'SOLAS_MED', text: '⚡ SOLAS.TX' },
   { name: 'HYPERION', text: 'HYPERION_LABS' },

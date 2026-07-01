@@ -20,6 +20,7 @@ import ProcessStep from './components/ProcessStep';
 import TestimonialCard from './components/TestimonialCard';
 import PrimaryButton from './components/PrimaryButton';
 import Logo from './components/Logo';
+import VelluxiaVisualizer from './components/VelluxiaVisualizer';
 
 export default function App() {
   // Terminal states
@@ -52,7 +53,7 @@ export default function App() {
   // Terminal navigation tab state: 'chat' | 'cases' | 'contact'
   const [terminalTab, setTerminalTab] = useState<'chat' | 'cases' | 'contact'>('chat');
   // Selected case file inside the terminal case system
-  const [selectedCaseId, setSelectedCaseId] = useState<string>('case-01');
+  const [selectedCaseId, setSelectedCaseId] = useState<string>('case-velluxia');
 
   // Unified scroll helper to keep messages fully visible
   const forceScrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
@@ -607,6 +608,10 @@ export default function App() {
                                   </div>
 
                                   {/* Interactive simulated brand designs */}
+                                  {activeFile.id === 'case-velluxia' && (
+                                    <VelluxiaVisualizer />
+                                  )}
+
                                   {activeFile.id === 'case-01' && (
                                     <div className="text-center relative z-10 flex flex-col items-center">
                                       <div className="relative mb-2">

@@ -2,6 +2,15 @@ import { CaseFile } from '../types';
 
 export const CASE_FILES: CaseFile[] = [
   {
+    id: 'case-velluxia',
+    number: 'FILE #0811',
+    client: 'Velluxia',
+    incident: 'Korean Dermatology skincare brand crafted for Indian skin struggled to break through a saturated generic market. Needed a premium, high-impact editorial aesthetic and visual structure to secure launch positioning.',
+    responseTime: '2 hours',
+    outcome: 100,
+    outcomeText: 'Architected high-concept social media campaigns and scientific grid anatomy structures. Achieved 210% increase in brand memorability.'
+  },
+  {
     id: 'case-01',
     number: 'FILE #4081',
     client: 'Apex Fintech',
