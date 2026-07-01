@@ -1,4 +1,3 @@
-import { GoogleGenAI } from '@google/genai';
 import Anthropic from '@anthropic-ai/sdk';
 
 const DISPATCH_PROMPT = `You are DISPATCH, the AI operator for SOS Agency, a bold branding & creative agency. You live inside a terminal-style chat interface on a blood-red "emergency broadcast" themed website. Your job is to talk to visitors like an emergency dispatcher who happens to be a sharp, experienced creative director — calm, confident, a little cheeky, never panicked.
@@ -22,6 +21,8 @@ SERVICES:
 - Brand Tune-Up: brand is fine but wants sharper creative, 3-4 weeks
 
 GUARDRAILS: Redirect off-topic questions warmly back to branding. Never invent case studies, pricing, or client names. Never use fake urgency/scarcity. If a visitor is frustrated, drop the persona and help plainly. Always offer human escalation on request. High-intent signals (deadline under 4 weeks, "urgent," asks for a human, mentions being let down by prior agency) → immediately offer +91 - 9099906631 or contact@sosagency.in or [CALL US NOW].`;
+
+
 
 export default async function handler(req: any, res: any) {
   // Set CORS headers for security and browser access
@@ -70,114 +71,43 @@ export default async function handler(req: any, res: any) {
                          !process.env.ANTHROPIC_API_KEY.startsWith('dummy') &&
                          !process.env.ANTHROPIC_API_KEY.includes('YOUR');
 
-    const hasGemini = !!process.env.GEMINI_API_KEY && 
-                      process.env.GEMINI_API_KEY !== 'undefined' && 
-                      process.env.GEMINI_API_KEY !== 'null' && 
-                      process.env.GEMINI_API_KEY.trim() !== '' &&
-                      !process.env.GEMINI_API_KEY.startsWith('dummy') &&
-                      !process.env.GEMINI_API_KEY.includes('YOUR');
-
-    if (!hasAnthropic && !hasGemini) {
+    if (!hasAnthropic) {
       return res.json({
-        reply: "📡 DISPATCH [SIGNAL DEGRADED]: AI credentials are currently unconfigured or invalid. To bypass the terminal, connect directly to our dispatcher: dial +91 - 9099906631 or email contact@sosagency.in.",
-        error: "Missing or invalid ANTHROPIC_API_KEY and GEMINI_API_KEY."
+        reply: "📡 DISPATCH [SIGNAL DEGRADED]: Claude AI terminal requires a valid `ANTHROPIC_API_KEY` to operate. To connect the real Claude AI: please open the 'Secrets' panel in the AI Studio UI, add a secret named `ANTHROPIC_API_KEY` with your Anthropic API key, restart the server, and reboot this terminal. Direct escalation dial is always available: +91 - 9099906631.",
+        error: "Missing or unconfigured ANTHROPIC_API_KEY."
       });
     }
 
-    // Case 1: Anthropic API Key is set
-    if (hasAnthropic) {
-      try {
-        const anthropic = new Anthropic({
-          apiKey: process.env.ANTHROPIC_API_KEY,
-        });
-
-        // Standardize roles for Anthropic (must be user/assistant only)
-        const formattedMessages: { role: 'user' | 'assistant'; content: string }[] = apiMessages.map((msg: any) => ({
-          role: msg.role === 'assistant' ? ('assistant' as const) : ('user' as const),
-          content: msg.content,
-        }));
-
-        let modelName = 'claude-3-5-sonnet-latest';
-        
-        const response = await anthropic.messages.create({
-          model: modelName,
-          max_tokens: 500,
-          system: DISPATCH_PROMPT,
-          messages: formattedMessages,
-        });
-
-        const replyText = response.content
-          .filter((c: any) => c.type === 'text')
-          .map((c: any) => c.text)
-          .join('\n');
-
-        return res.json({ reply: replyText });
-      } catch (anthropicError: any) {
-        console.error('Anthropic API Call Failed, falling back to Gemini if available:', anthropicError.message);
-        if (!hasGemini) {
-          return res.json({
-            reply: "📡 DISPATCH [SIGNAL FAULT]: Direct channel failed. Dial +91 - 9099906631 or email contact@sosagency.in for human support.",
-            error: anthropicError.message
-          });
-        }
-      }
-    }
-
-    // Case 2: Gemini API Key is set (either as default or fallback)
-    if (hasGemini) {
-      const ai = new GoogleGenAI({
-        apiKey: process.env.GEMINI_API_KEY,
-        httpOptions: {
-          headers: {
-            'User-Agent': 'aistudio-build',
-          }
-        }
+    try {
+      const anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY,
       });
 
-      // Format history for Gemini (roles: 'user' or 'model')
-      const contents = apiMessages.map((msg: any) => ({
-        role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }],
+      // Standardize roles for Anthropic (must be user/assistant only)
+      const formattedMessages: { role: 'user' | 'assistant'; content: string }[] = apiMessages.map((msg: any) => ({
+        role: msg.role === 'assistant' ? ('assistant' as const) : ('user' as const),
+        content: msg.content,
       }));
 
-      const modelsToTry = ['gemini-3.5-flash', 'gemini-3.1-flash-lite'];
-      let lastError: any = null;
-      let replyText = "";
+      const response = await anthropic.messages.create({
+        model: 'claude-3-5-sonnet-latest',
+        max_tokens: 500,
+        system: DISPATCH_PROMPT,
+        messages: formattedMessages,
+      });
 
-      for (const modelName of modelsToTry) {
-        for (let attempt = 1; attempt <= 2; attempt++) {
-          try {
-            const response = await ai.models.generateContent({
-              model: modelName,
-              contents: contents,
-              config: {
-                systemInstruction: DISPATCH_PROMPT,
-                temperature: 0.7,
-              }
-            });
-            if (response.text) {
-              replyText = response.text;
-              break;
-            }
-          } catch (err: any) {
-            lastError = err;
-            console.warn(`[Gemini API] Attempt ${attempt} with model ${modelName} failed:`, err.message || err);
-            if (attempt === 1) {
-              await new Promise((resolve) => setTimeout(resolve, 1000));
-            }
-          }
-        }
-        if (replyText) {
-          break;
-        }
-      }
+      const replyText = response.content
+        .filter((c: any) => c.type === 'text')
+        .map((c: any) => c.text)
+        .join('\n');
 
-      if (!replyText && lastError) {
-        throw lastError;
-      }
-
-      const finalReply = replyText || "Signal's a bit weak right now — try again, or hit [CALL US NOW] to skip straight to a human.";
-      return res.json({ reply: finalReply });
+      return res.json({ reply: replyText });
+    } catch (anthropicError: any) {
+      console.error('Anthropic API Call Failed:', anthropicError.message);
+      return res.json({
+        reply: "📡 DISPATCH [SIGNAL FAULT]: The provided Anthropic API Key is invalid or expired. Please check your `ANTHROPIC_API_KEY` in the AI Studio Secrets panel, verify it has active credits, and try again. For human support: call +91 - 9099906631 or email contact@sosagency.in.",
+        error: anthropicError.message
+      });
     }
 
   } catch (err: any) {
