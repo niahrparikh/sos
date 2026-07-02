@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenAI } from '@google/genai';
 import { DISPATCH_PROMPT } from './src/lib/dispatchPrompt.js';
 
 // Load environment variables
@@ -11,6 +12,9 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Circuit breaker state to permanently bypass Anthropic once it fails
+let useGeminiPrimary = false;
 
 async function startServer() {
   const app = express();
@@ -41,50 +45,100 @@ async function startServer() {
         });
       }
 
-      const hasAnthropic = !!process.env.ANTHROPIC_API_KEY && 
+      // Helper function to invoke Gemini backup satellite network
+      const runGeminiFallback = async () => {
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+          throw new Error('GEMINI_API_KEY environment variable is not defined.');
+        }
+
+        const ai = new GoogleGenAI({
+          apiKey: apiKey,
+          httpOptions: {
+            headers: {
+              'User-Agent': 'aistudio-build',
+            }
+          }
+        });
+
+        // Translate messages history into Gemini content structure
+        const contents = apiMessages.map((msg: any) => ({
+          role: msg.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: msg.content }]
+        }));
+
+        const response = await ai.models.generateContent({
+          model: 'gemini-3.5-flash',
+          contents: contents,
+          config: {
+            systemInstruction: DISPATCH_PROMPT,
+          }
+        });
+
+        return response.text || '';
+      };
+
+      const hasAnthropic = !useGeminiPrimary &&
+                           !!process.env.ANTHROPIC_API_KEY && 
                            process.env.ANTHROPIC_API_KEY !== 'undefined' && 
                            process.env.ANTHROPIC_API_KEY !== 'null' && 
                            process.env.ANTHROPIC_API_KEY.trim() !== '' &&
                            !process.env.ANTHROPIC_API_KEY.startsWith('dummy') &&
                            !process.env.ANTHROPIC_API_KEY.includes('YOUR');
 
-      if (!hasAnthropic) {
-        return res.json({
-          reply: "📡 DISPATCH [SIGNAL DEGRADED]: Claude AI terminal requires a valid `ANTHROPIC_API_KEY` to operate. To connect the real Claude AI: please open the 'Secrets' panel in the AI Studio UI, add a secret named `ANTHROPIC_API_KEY` with your Anthropic API key, restart the server, and reboot this terminal. Direct escalation dial is always available: +91 - 9099906631.",
-          error: "Missing or unconfigured ANTHROPIC_API_KEY."
-        });
-      }
+      if (hasAnthropic) {
+        try {
+          const anthropic = new Anthropic({
+            apiKey: process.env.ANTHROPIC_API_KEY,
+          });
 
-      try {
-        const anthropic = new Anthropic({
-          apiKey: process.env.ANTHROPIC_API_KEY,
-        });
+          // Standardize roles for Anthropic (must be user/assistant only)
+          const formattedMessages: { role: 'user' | 'assistant'; content: string }[] = apiMessages.map((msg: any) => ({
+            role: msg.role === 'assistant' ? ('assistant' as const) : ('user' as const),
+            content: msg.content,
+          }));
 
-        // Standardize roles for Anthropic (must be user/assistant only)
-        const formattedMessages: { role: 'user' | 'assistant'; content: string }[] = apiMessages.map((msg: any) => ({
-          role: msg.role === 'assistant' ? ('assistant' as const) : ('user' as const),
-          content: msg.content,
-        }));
+          const response = await anthropic.messages.create({
+            model: 'claude-3-5-sonnet-latest',
+            max_tokens: 500,
+            system: DISPATCH_PROMPT,
+            messages: formattedMessages,
+          });
 
-        const response = await anthropic.messages.create({
-          model: 'claude-3-5-sonnet-latest',
-          max_tokens: 500,
-          system: DISPATCH_PROMPT,
-          messages: formattedMessages,
-        });
+          const replyText = response.content
+            .filter((c: any) => c.type === 'text')
+            .map((c: any) => c.text)
+            .join('\n');
 
-        const replyText = response.content
-          .filter((c: any) => c.type === 'text')
-          .map((c: any) => c.text)
-          .join('\n');
-
-        return res.json({ reply: replyText });
-      } catch (anthropicError: any) {
-        console.error('Anthropic API Call Failed:', anthropicError.message);
-        return res.json({
-          reply: "📡 DISPATCH [SIGNAL FAULT]: The provided Anthropic API Key is invalid or expired. Please check your `ANTHROPIC_API_KEY` in the AI Studio Secrets panel, verify it has active credits, and try again. For human support: call +91 - 9099906631 or email contact@sosagency.in.",
-          error: anthropicError.message
-        });
+          return res.json({ reply: replyText });
+        } catch (anthropicError: any) {
+          // Switch to Gemini bypass permanently for future inputs
+          useGeminiPrimary = true;
+          console.log('Anthropic API connection rerouting via backup satellite network...');
+          
+          try {
+            const fallbackReply = await runGeminiFallback();
+            return res.json({ reply: fallbackReply });
+          } catch (geminiError: any) {
+            console.error('All backup communications failed:', geminiError.message);
+            return res.json({
+              reply: "📡 DISPATCH [SIGNAL FAULT]: The main Anthropic connection failed, and backup satellite communication is currently offline. Direct emergency dial is active: call +91 - 9099906631 or email contact@sosagency.in.",
+              error: `Anthropic: ${anthropicError.message}. Gemini: ${geminiError.message}`
+            });
+          }
+        }
+      } else {
+        // Transparent fallback to Gemini when Anthropic is bypassed or unconfigured
+        try {
+          const fallbackReply = await runGeminiFallback();
+          return res.json({ reply: fallbackReply });
+        } catch (geminiError: any) {
+          console.error('Gemini communication bypassed/offline:', geminiError.message);
+          return res.json({
+            reply: "📡 DISPATCH [SIGNAL DEGRADED]: Satellite link unestablished. Direct connection active: please call +91 - 9099906631 or email contact@sosagency.in.",
+            error: geminiError.message
+          });
+        }
       }
 
     } catch (err: any) {
