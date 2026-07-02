@@ -21,6 +21,7 @@ import TestimonialCard from './components/TestimonialCard';
 import PrimaryButton from './components/PrimaryButton';
 import Logo from './components/Logo';
 import VelluxiaVisualizer from './components/VelluxiaVisualizer';
+import GujaratPanthersVisualizer from './components/GujaratPanthersVisualizer';
 
 export default function App() {
   // Terminal states
@@ -53,7 +54,7 @@ export default function App() {
   // Terminal navigation tab state: 'chat' | 'cases' | 'contact'
   const [terminalTab, setTerminalTab] = useState<'chat' | 'cases' | 'contact'>('chat');
   // Selected case file inside the terminal case system
-  const [selectedCaseId, setSelectedCaseId] = useState<string>('case-velluxia');
+  const [selectedCaseId, setSelectedCaseId] = useState<string>('case-gujarat-panthers');
 
   // Unified scroll helper to keep messages fully visible
   const forceScrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
@@ -608,6 +609,10 @@ export default function App() {
                                   </div>
 
                                   {/* Interactive simulated brand designs */}
+                                  {activeFile.id === 'case-gujarat-panthers' && (
+                                    <GujaratPanthersVisualizer />
+                                  )}
+
                                   {activeFile.id === 'case-velluxia' && (
                                     <VelluxiaVisualizer />
                                   )}

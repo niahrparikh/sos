@@ -2,6 +2,15 @@ import { CaseFile } from '../types';
 
 export const CASE_FILES: CaseFile[] = [
   {
+    id: 'case-gujarat-panthers',
+    number: 'FILE #1922',
+    client: 'Gujarat Panthers',
+    incident: 'Tennis Premier League (TPL) franchise needing a complete high-impact social media brand kit, hyper-kinetic video production graphics, and an immersive custom web roster experience.',
+    responseTime: '3 hours',
+    outcome: 100,
+    outcomeText: 'Delivered fully animated roster announcement cards, interactive Matchday engine, and dynamic squad graphics. Amplified fan engagement by 340%.'
+  },
+  {
     id: 'case-velluxia',
     number: 'FILE #0811',
     client: 'Velluxia',

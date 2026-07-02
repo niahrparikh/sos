@@ -2,6 +2,12 @@ import { Testimonial } from '../types';
 
 export const TESTIMONIALS: Testimonial[] = [
   {
+    id: 'test-gujarat-panthers',
+    quote: "SOS Agency designed a world-class visual system for the Gujarat Panthers in the Tennis Premier League. The speed and quality of our player announcements, web designs, and social media templates left the entire league behind.",
+    client: "Rohan Gupta",
+    role: "Owner, Gujarat Panthers Franchise"
+  },
+  {
     id: 'test-velluxia',
     quote: "Standard agency proposals were dull, clinical, and sterile. SOS Agency understood our Korean Dermatology roots and translated them with a beautiful, high-concept editorial structure tailored for Indian skin. Absolutely stunning work.",
     client: "Aarav Sharma",
