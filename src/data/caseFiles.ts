@@ -2,6 +2,15 @@ import { CaseFile } from '../types';
 
 export const CASE_FILES: CaseFile[] = [
   {
+    id: 'case-being-beyond',
+    number: 'FILE #7102',
+    client: 'Being Beyond co',
+    incident: 'Conversational card game "Let\'s Fix It" by Ipsita needed a cohesive personal brand identity, premium physical card packaging designs, social media kits, and a high-converting web platform to connect with couples and friends.',
+    responseTime: '4 hours',
+    outcome: 100,
+    outcomeText: 'Architected premium minimalist card aesthetics, integrated interactive MIS Repair toolkits, and designed custom YouTube/digital campaign visuals. Boosted sales conversions by 280%.'
+  },
+  {
     id: 'case-gujarat-panthers',
     number: 'FILE #1922',
     client: 'Gujarat Panthers',

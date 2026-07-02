@@ -41,8 +41,8 @@ export default function CaseFileCard({ id, caseFile, index, onViewDetails }: Cas
 
         {/* Incident description */}
         <div className="mb-4">
-          <label className="font-mono text-[9px] uppercase text-neutral-500 block tracking-widest font-bold">INCIDENT SUMMARY</label>
-          <p className="font-mono text-xs text-neutral-300 leading-relaxed mt-1">
+          <label className="font-mono text-[10px] uppercase text-neutral-400 block tracking-widest font-bold">INCIDENT SUMMARY</label>
+          <p className="font-mono text-xs sm:text-sm text-neutral-200 leading-relaxed mt-1.5">
             {caseFile.incident}
           </p>
         </div>
@@ -50,14 +50,14 @@ export default function CaseFileCard({ id, caseFile, index, onViewDetails }: Cas
         {/* Response Time */}
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <label className="font-mono text-[9px] uppercase text-neutral-500 block tracking-widest font-bold">RESPONSE TIME</label>
-            <span className="font-mono text-xs text-[#FF3B30] font-bold">
+            <label className="font-mono text-[10px] uppercase text-neutral-400 block tracking-widest font-bold">RESPONSE TIME</label>
+            <span className="font-mono text-xs sm:text-sm text-[#FF3B30] font-bold">
               ⚡ {caseFile.responseTime}
             </span>
           </div>
           <div className="text-right">
-            <label className="font-mono text-[9px] uppercase text-neutral-500 block tracking-widest font-bold">RESOLUTION</label>
-            <span className="font-mono text-xs text-green-500 font-bold">
+            <label className="font-mono text-[10px] uppercase text-neutral-400 block tracking-widest font-bold">RESOLUTION</label>
+            <span className="font-mono text-xs sm:text-sm text-green-500 font-bold">
               STABLE
             </span>
           </div>
@@ -68,8 +68,8 @@ export default function CaseFileCard({ id, caseFile, index, onViewDetails }: Cas
         {/* Outcome & Progress Bar */}
         <div className="mb-5 bg-neutral-950 p-3 rounded-none border border-neutral-900">
           <div className="flex justify-between items-center mb-1.5 select-none">
-            <span className="font-mono text-[9px] text-neutral-500 tracking-wider">BRAND RECONSTRUCTION STRENGTH</span>
-            <span className="font-mono text-xs text-[#FF3B30] font-bold">{caseFile.outcome}%</span>
+            <span className="font-mono text-[10px] text-neutral-400 tracking-wider">BRAND RECONSTRUCTION STRENGTH</span>
+            <span className="font-mono text-sm text-[#FF3B30] font-bold">{caseFile.outcome}%</span>
           </div>
           {/* Bar */}
           <div className="w-full bg-neutral-900 h-1.5 rounded-none overflow-hidden">
@@ -81,7 +81,7 @@ export default function CaseFileCard({ id, caseFile, index, onViewDetails }: Cas
               className="bg-[#FF3B30] h-full"
             />
           </div>
-          <p className="font-mono text-[11px] text-neutral-400 mt-2 leading-relaxed">
+          <p className="font-mono text-xs sm:text-sm text-neutral-300 mt-2 leading-relaxed">
             {caseFile.outcomeText}
           </p>
         </div>

@@ -22,6 +22,7 @@ import PrimaryButton from './components/PrimaryButton';
 import Logo from './components/Logo';
 import VelluxiaVisualizer from './components/VelluxiaVisualizer';
 import GujaratPanthersVisualizer from './components/GujaratPanthersVisualizer';
+import BeingBeyondVisualizer from './components/BeingBeyondVisualizer';
 
 export default function App() {
   // Terminal states
@@ -54,7 +55,7 @@ export default function App() {
   // Terminal navigation tab state: 'chat' | 'cases' | 'contact'
   const [terminalTab, setTerminalTab] = useState<'chat' | 'cases' | 'contact'>('chat');
   // Selected case file inside the terminal case system
-  const [selectedCaseId, setSelectedCaseId] = useState<string>('case-gujarat-panthers');
+  const [selectedCaseId, setSelectedCaseId] = useState<string>('case-being-beyond');
 
   // Unified scroll helper to keep messages fully visible
   const forceScrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
@@ -269,7 +270,7 @@ export default function App() {
             BRAND IN TROUBLE?<br />
             <span className="text-[#FF3B30] italic">SEND SOS.</span>
           </h1>
-          <p className="font-mono text-xs md:text-sm text-neutral-300 mt-3 max-w-xl mx-auto leading-relaxed">
+          <p className="font-mono text-sm md:text-base text-neutral-200 mt-3 max-w-2xl mx-auto leading-relaxed">
             Connect immediately to Dispatch, our senior creative AI agent, trained to triage identity, positioning, and visual debt under high pressure.
           </p>
         </div>
@@ -594,7 +595,7 @@ export default function App() {
                                 </div>
 
                                 {/* EMBEDDED HIGH-TECH BRAND IMAGE / VECTOR SCHEMATIC */}
-                                <div className="bg-[#080808] border border-neutral-900 aspect-[16/7] w-full flex items-center justify-center p-4 relative overflow-hidden">
+                                <div className="bg-[#080808] border border-neutral-900 min-h-[460px] sm:min-h-[500px] w-full flex flex-col p-2.5 sm:p-4 relative overflow-hidden">
                                   <div className="absolute inset-0 bg-scanlines opacity-20 pointer-events-none" />
                                   
                                   {/* Overlay ciphers */}
@@ -609,6 +610,10 @@ export default function App() {
                                   </div>
 
                                   {/* Interactive simulated brand designs */}
+                                  {activeFile.id === 'case-being-beyond' && (
+                                    <BeingBeyondVisualizer />
+                                  )}
+
                                   {activeFile.id === 'case-gujarat-panthers' && (
                                     <GujaratPanthersVisualizer />
                                   )}
@@ -618,7 +623,7 @@ export default function App() {
                                   )}
 
                                   {activeFile.id === 'case-01' && (
-                                    <div className="text-center relative z-10 flex flex-col items-center">
+                                    <div className="text-center relative z-10 flex flex-col items-center my-auto mx-auto">
                                       <div className="relative mb-2">
                                         <div className="w-12 h-12 border-2 border-[#FF3B30] rotate-45 flex items-center justify-center relative animate-pulse">
                                           <div className="w-6 h-6 bg-[#FF3B30]/30" />
@@ -631,7 +636,7 @@ export default function App() {
                                   )}
 
                                   {activeFile.id === 'case-02' && (
-                                    <div className="text-center relative z-10 flex flex-col items-center w-full max-w-[200px]">
+                                    <div className="text-center relative z-10 flex flex-col items-center w-full max-w-[200px] my-auto mx-auto">
                                       <div className="w-full h-8 flex items-end justify-between gap-1.5 mb-2.5">
                                         {[20, 60, 40, 95, 30, 10, 50, 75, 45, 100, 30, 60, 20].map((h, idx) => (
                                           <div
@@ -647,7 +652,7 @@ export default function App() {
                                   )}
 
                                   {activeFile.id === 'case-03' && (
-                                    <div className="text-center relative z-10 flex flex-col items-center">
+                                    <div className="text-center relative z-10 flex flex-col items-center my-auto mx-auto">
                                       <div className="relative w-12 h-12 mb-2 flex items-center justify-center">
                                         <div className="absolute inset-0 border border-cyan-500 rounded-full animate-spin [animation-duration:12s]" />
                                         <div className="absolute w-8 h-8 border border-dashed border-cyan-400 rounded-full animate-spin [animation-duration:5s]" />
@@ -659,7 +664,7 @@ export default function App() {
                                   )}
 
                                   {activeFile.id === 'case-04' && (
-                                    <div className="text-center relative z-10 flex flex-col items-center">
+                                    <div className="text-center relative z-10 flex flex-col items-center my-auto mx-auto">
                                       <div className="w-14 h-9 border border-yellow-500 relative mb-2 flex items-center justify-center font-black text-[9px] text-yellow-500 bg-yellow-950/20 tracking-tighter">
                                         <div className="absolute top-0 left-0 w-1.5 h-1.5 border-b border-r border-yellow-500" />
                                         <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-t border-l border-yellow-500" />

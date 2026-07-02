@@ -27,7 +27,7 @@ export default function TestimonialCard({ id, testimonial, index }: TestimonialC
 
       <div className="relative z-10">
         {/* Quote body */}
-        <p className="font-mono text-xs md:text-sm text-neutral-200 leading-relaxed italic mb-6">
+        <p className="font-mono text-sm sm:text-base text-neutral-100 leading-relaxed italic mb-6">
           "{testimonial.quote}"
         </p>
       </div>

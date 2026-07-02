@@ -71,7 +71,7 @@ export default function ProcessStep() {
             </div>
 
             {/* Description */}
-            <p className="font-mono text-xs text-neutral-400 leading-relaxed max-w-xs lg:max-w-none">
+            <p className="font-mono text-xs sm:text-sm text-neutral-300 leading-relaxed max-w-xs lg:max-w-none mt-1">
               {step.description}
             </p>
           </motion.div>
