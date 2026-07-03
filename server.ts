@@ -143,12 +143,19 @@ async function startServer() {
         return res.status(400).json({ error: 'Prompt description is required.' });
       }
 
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        return res.status(500).json({ error: 'GEMINI_API_KEY is not defined in backend secrets.' });
-      }
+      const geminiKey = process.env.GEMINI_API_KEY;
+      const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
-      const ai = new GoogleGenAI({ apiKey });
+      let useAnthropic = false;
+      let selectedApiKey = '';
+
+      if (anthropicKey && anthropicKey.trim() !== '' && !anthropicKey.startsWith('dummy') && !anthropicKey.includes('YOUR')) {
+        useAnthropic = true;
+        selectedApiKey = anthropicKey.trim();
+      } else if (geminiKey && geminiKey.trim().startsWith('sk-ant-')) {
+        useAnthropic = true;
+        selectedApiKey = geminiKey.trim();
+      }
 
       const QUOTATION_GENERATOR_PROMPT = `
 You are SOS Agency's senior corporate sales and dispatch assistant.
@@ -185,16 +192,40 @@ ${JSON.stringify(clientDetails || {})}
 Please generate the quotation.
 `;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash',
-        contents: [userContent],
-        config: {
-          systemInstruction: QUOTATION_GENERATOR_PROMPT,
-          responseMimeType: 'application/json',
-        }
-      });
+      let replyText = '';
 
-      const replyText = response.text || '';
+      if (useAnthropic) {
+        const anthropic = new Anthropic({ apiKey: selectedApiKey });
+        const response = await anthropic.messages.create({
+          model: 'claude-3-5-sonnet-latest',
+          max_tokens: 2000,
+          system: QUOTATION_GENERATOR_PROMPT,
+          messages: [
+            {
+              role: 'user',
+              content: userContent
+            }
+          ]
+        });
+        replyText = response.content
+          .filter((c: any) => c.type === 'text')
+          .map((c: any) => c.text)
+          .join('\n');
+      } else {
+        if (!geminiKey) {
+          return res.status(500).json({ error: 'GEMINI_API_KEY is not defined in backend secrets.' });
+        }
+        const ai = new GoogleGenAI({ apiKey: geminiKey });
+        const response = await ai.models.generateContent({
+          model: 'gemini-3.5-flash',
+          contents: [userContent],
+          config: {
+            systemInstruction: QUOTATION_GENERATOR_PROMPT,
+            responseMimeType: 'application/json',
+          }
+        });
+        replyText = response.text || '';
+      }
       let parsedQuote;
       try {
         parsedQuote = JSON.parse(replyText.trim());
