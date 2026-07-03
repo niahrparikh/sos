@@ -28,18 +28,36 @@ import QuotationDashboard from './components/QuotationDashboard';
 export default function App() {
   // Simple client-side routing state
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [currentHash, setCurrentHash] = useState(window.location.hash);
 
   useEffect(() => {
     const handleLocationChange = () => {
       setCurrentPath(window.location.pathname);
+      setCurrentHash(window.location.hash);
     };
     window.addEventListener('popstate', handleLocationChange);
-    return () => window.removeEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    // Initial check
+    handleLocationChange();
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
   }, []);
 
   const navigateTo = (to: string) => {
-    window.history.pushState({}, '', to);
-    setCurrentPath(to);
+    if (to.startsWith('#') || to.includes('#')) {
+      window.location.hash = to.includes('#') ? to.substring(to.indexOf('#')) : to;
+      setCurrentHash(window.location.hash);
+    } else {
+      window.history.pushState({}, '', to);
+      // Remove hash from the URL completely
+      if (window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+      setCurrentPath(to);
+      setCurrentHash('');
+    }
   };
 
   // Terminal states
@@ -238,7 +256,18 @@ export default function App() {
     setFormSubmitted(true);
   };
 
-  if (currentPath === '/admin' || currentPath === '/login' || currentPath === '/quotation' || currentPath === '/quotations') {
+  const isSalesRoute = 
+    currentPath === '/admin' || 
+    currentPath === '/login' || 
+    currentPath === '/quotation' || 
+    currentPath === '/quotations' || 
+    currentPath === '/sales' ||
+    currentHash === '#/sales' || 
+    currentHash === '#sales' || 
+    currentHash === '#/admin' || 
+    currentHash === '#admin';
+
+  if (isSalesRoute) {
     return (
       <QuotationDashboard onBackToMain={() => navigateTo('/')} />
     );
@@ -258,13 +287,6 @@ export default function App() {
             Signal Strength: Optimized<br/>
             Latency: 14ms
           </div>
-          {/* Sales Quotation Panel */}
-          <button
-            onClick={() => navigateTo('/admin')}
-            className="px-3 py-1.5 border border-[#FF3B30] text-[#FF3B30] text-[11px] hover:bg-[#FF3B30] hover:text-white bg-transparent transition-colors uppercase font-bold cursor-pointer"
-          >
-            [SALES] ADMIN
-          </button>
           {/* Escape Human Mode Switch */}
           <button
             onClick={() => scrollToSection('offline-form')}
@@ -1207,7 +1229,6 @@ export default function App() {
             SESSION SECURED. // SOS AGENCY © 2026. ALL TELEMETRY PROTECTED.
           </div>
           <div className="flex gap-4">
-            <span onClick={() => navigateTo('/admin')} className="hover:text-white cursor-pointer font-bold text-[#FF3B30]">[SALES_PORTAL]</span>
             <span className="hover:text-white cursor-pointer">[SECURE_PROTOCOL]</span>
             <span className="hover:text-white cursor-pointer">[COOKIES_BYPASS]</span>
           </div>
