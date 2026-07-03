@@ -252,7 +252,12 @@ export default function QuotationDashboard({ onBackToMain }: QuotationDashboardP
   // Handle Admin Login
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'admin123') {
+    const cleanUser = username.trim().toLowerCase();
+    const cleanPass = password.trim();
+    if (
+      (cleanUser === 'admin' && cleanPass === 'admin123') ||
+      (cleanUser === 'admin' && cleanPass.toLowerCase() === 'admin123')
+    ) {
       localStorage.setItem('sos_sales_logged_in', 'true');
       setIsLoggedIn(true);
       setLoginError('');
@@ -260,6 +265,16 @@ export default function QuotationDashboard({ onBackToMain }: QuotationDashboardP
     } else {
       setLoginError('Invalid transmission codes. Hint: admin / admin123');
     }
+  };
+
+  // One-click demo/admin bypass login
+  const handleInstantLogin = () => {
+    setUsername('admin');
+    setPassword('admin123');
+    localStorage.setItem('sos_sales_logged_in', 'true');
+    setIsLoggedIn(true);
+    setLoginError('');
+    showToast('Logged in successfully via bypass protocol');
   };
 
   // Handle Logout
@@ -622,12 +637,22 @@ export default function QuotationDashboard({ onBackToMain }: QuotationDashboardP
                 </div>
               )}
 
-              <button
-                type="submit"
-                className="w-full py-2.5 bg-[#FF3B30] hover:bg-red-700 transition-colors text-xs font-black tracking-widest text-white uppercase"
-              >
-                AUTHORIZE TERMINAL
-              </button>
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 bg-[#FF3B30] hover:bg-red-700 transition-colors text-xs font-black tracking-widest text-white uppercase cursor-pointer"
+                >
+                  AUTHORIZE TERMINAL
+                </button>
+                <button
+                  type="button"
+                  onClick={handleInstantLogin}
+                  className="px-3 py-2.5 bg-neutral-800 hover:bg-neutral-700 border border-neutral-750 hover:border-neutral-500 text-[10px] font-black tracking-widest text-emerald-400 hover:text-emerald-300 uppercase cursor-pointer transition-colors"
+                  title="Instant Demo / Sales Bypass"
+                >
+                  BYPASS
+                </button>
+              </div>
             </form>
 
             <div className="mt-6 border-t border-neutral-850 pt-4 text-center">
