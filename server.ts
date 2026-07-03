@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
-import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenAI } from '@google/genai';
 import { DISPATCH_PROMPT } from './src/lib/dispatchPrompt.js';
 
@@ -13,9 +12,6 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Circuit breaker state to permanently bypass Anthropic once it fails
-let useGeminiPrimary = false;
 
 async function startServer() {
   const app = express();
@@ -144,17 +140,8 @@ async function startServer() {
       }
 
       const geminiKey = process.env.GEMINI_API_KEY;
-      const anthropicKey = process.env.ANTHROPIC_API_KEY;
-
-      let useAnthropic = false;
-      let selectedApiKey = '';
-
-      if (anthropicKey && anthropicKey.trim() !== '' && !anthropicKey.startsWith('dummy') && !anthropicKey.includes('YOUR')) {
-        useAnthropic = true;
-        selectedApiKey = anthropicKey.trim();
-      } else if (geminiKey && geminiKey.trim().startsWith('sk-ant-')) {
-        useAnthropic = true;
-        selectedApiKey = geminiKey.trim();
+      if (!geminiKey) {
+        return res.status(500).json({ error: 'GEMINI_API_KEY is not defined in backend secrets.' });
       }
 
       const QUOTATION_GENERATOR_PROMPT = `
@@ -192,40 +179,16 @@ ${JSON.stringify(clientDetails || {})}
 Please generate the quotation.
 `;
 
-      let replyText = '';
-
-      if (useAnthropic) {
-        const anthropic = new Anthropic({ apiKey: selectedApiKey });
-        const response = await anthropic.messages.create({
-          model: 'claude-3-5-sonnet-latest',
-          max_tokens: 2000,
-          system: QUOTATION_GENERATOR_PROMPT,
-          messages: [
-            {
-              role: 'user',
-              content: userContent
-            }
-          ]
-        });
-        replyText = response.content
-          .filter((c: any) => c.type === 'text')
-          .map((c: any) => c.text)
-          .join('\n');
-      } else {
-        if (!geminiKey) {
-          return res.status(500).json({ error: 'GEMINI_API_KEY is not defined in backend secrets.' });
+      const ai = new GoogleGenAI({ apiKey: geminiKey });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.5-flash',
+        contents: [userContent],
+        config: {
+          systemInstruction: QUOTATION_GENERATOR_PROMPT,
+          responseMimeType: 'application/json',
         }
-        const ai = new GoogleGenAI({ apiKey: geminiKey });
-        const response = await ai.models.generateContent({
-          model: 'gemini-3.5-flash',
-          contents: [userContent],
-          config: {
-            systemInstruction: QUOTATION_GENERATOR_PROMPT,
-            responseMimeType: 'application/json',
-          }
-        });
-        replyText = response.text || '';
-      }
+      });
+      const replyText = response.text || '';
       let parsedQuote;
       try {
         parsedQuote = JSON.parse(replyText.trim());
@@ -305,8 +268,8 @@ Please generate the quotation.
         });
       }
 
-      // Helper function to invoke Gemini backup satellite network
-      const runGeminiFallback = async () => {
+      // Invoke Gemini satellite network
+      try {
         const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) {
           throw new Error('GEMINI_API_KEY environment variable is not defined.');
@@ -335,70 +298,14 @@ Please generate the quotation.
           }
         });
 
-        return response.text || '';
-      };
-
-      const hasAnthropic = !useGeminiPrimary &&
-                           !!process.env.ANTHROPIC_API_KEY && 
-                           process.env.ANTHROPIC_API_KEY !== 'undefined' && 
-                           process.env.ANTHROPIC_API_KEY !== 'null' && 
-                           process.env.ANTHROPIC_API_KEY.trim() !== '' &&
-                           !process.env.ANTHROPIC_API_KEY.startsWith('dummy') &&
-                           !process.env.ANTHROPIC_API_KEY.includes('YOUR');
-
-      if (hasAnthropic) {
-        try {
-          const anthropic = new Anthropic({
-            apiKey: process.env.ANTHROPIC_API_KEY,
-          });
-
-          // Standardize roles for Anthropic (must be user/assistant only)
-          const formattedMessages: { role: 'user' | 'assistant'; content: string }[] = apiMessages.map((msg: any) => ({
-            role: msg.role === 'assistant' ? ('assistant' as const) : ('user' as const),
-            content: msg.content,
-          }));
-
-          const response = await anthropic.messages.create({
-            model: 'claude-3-5-sonnet-latest',
-            max_tokens: 500,
-            system: DISPATCH_PROMPT,
-            messages: formattedMessages,
-          });
-
-          const replyText = response.content
-            .filter((c: any) => c.type === 'text')
-            .map((c: any) => c.text)
-            .join('\n');
-
-          return res.json({ reply: replyText });
-        } catch (anthropicError: any) {
-          // Switch to Gemini bypass permanently for future inputs
-          useGeminiPrimary = true;
-          console.log('Anthropic API connection rerouting via backup satellite network...');
-          
-          try {
-            const fallbackReply = await runGeminiFallback();
-            return res.json({ reply: fallbackReply });
-          } catch (geminiError: any) {
-            console.error('All backup communications failed:', geminiError.message);
-            return res.json({
-              reply: "📡 DISPATCH [SIGNAL FAULT]: The main Anthropic connection failed, and backup satellite communication is currently offline. Direct emergency dial is active: call +91 - 9099906631 or email contact@sosagency.in.",
-              error: `Anthropic: ${anthropicError.message}. Gemini: ${geminiError.message}`
-            });
-          }
-        }
-      } else {
-        // Transparent fallback to Gemini when Anthropic is bypassed or unconfigured
-        try {
-          const fallbackReply = await runGeminiFallback();
-          return res.json({ reply: fallbackReply });
-        } catch (geminiError: any) {
-          console.error('Gemini communication bypassed/offline:', geminiError.message);
-          return res.json({
-            reply: "📡 DISPATCH [SIGNAL DEGRADED]: Satellite link unestablished. Direct connection active: please call +91 - 9099906631 or email contact@sosagency.in.",
-            error: geminiError.message
-          });
-        }
+        const replyText = response.text || '';
+        return res.json({ reply: replyText });
+      } catch (geminiError: any) {
+        console.error('Gemini communication offline:', geminiError.message);
+        return res.json({
+          reply: "📡 DISPATCH [SIGNAL DEGRADED]: Satellite link unestablished. Direct connection active: please call +91 - 9099906631 or email contact@sosagency.in.",
+          error: geminiError.message
+        });
       }
 
     } catch (err: any) {
