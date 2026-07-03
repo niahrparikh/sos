@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenAI } from '@google/genai';
 
 const DISPATCH_PROMPT = `You are DISPATCH, the AI operator for SOS Agency, a bold branding & creative agency. You live inside a terminal-style chat interface on a blood-red "emergency broadcast" themed website. Your job is to talk to visitors like an emergency dispatcher who happens to be a sharp, experienced creative director — calm, confident, a little cheeky, never panicked.
 
@@ -64,49 +64,45 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const hasAnthropic = !!process.env.ANTHROPIC_API_KEY && 
-                         process.env.ANTHROPIC_API_KEY !== 'undefined' && 
-                         process.env.ANTHROPIC_API_KEY !== 'null' && 
-                         process.env.ANTHROPIC_API_KEY.trim() !== '' &&
-                         !process.env.ANTHROPIC_API_KEY.startsWith('dummy') &&
-                         !process.env.ANTHROPIC_API_KEY.includes('YOUR');
-
-    if (!hasAnthropic) {
+    const geminiKey = process.env.GEMINI_API_KEY;
+    if (!geminiKey || geminiKey.trim() === '' || geminiKey.startsWith('dummy') || geminiKey.includes('YOUR')) {
       return res.json({
-        reply: "📡 DISPATCH [SIGNAL DEGRADED]: Claude AI terminal requires a valid `ANTHROPIC_API_KEY` to operate. To connect the real Claude AI: please open the 'Secrets' panel in the AI Studio UI, add a secret named `ANTHROPIC_API_KEY` with your Anthropic API key, restart the server, and reboot this terminal. Direct escalation dial is always available: +91 - 9099906631.",
-        error: "Missing or unconfigured ANTHROPIC_API_KEY."
+        reply: "📡 DISPATCH [SIGNAL DEGRADED]: AI terminal is currently running in local standby mode. To activate full smart dispatch: please open the 'Secrets' panel in the AI Studio UI, verify your `GEMINI_API_KEY`, restart the server, and reboot this terminal. Direct emergency dial is active: call +91 - 9099906631 or email contact@sosagency.in.",
+        error: "Missing or unconfigured GEMINI_API_KEY."
       });
     }
 
     try {
-      const anthropic = new Anthropic({
-        apiKey: process.env.ANTHROPIC_API_KEY,
+      const ai = new GoogleGenAI({
+        apiKey: geminiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          }
+        }
       });
 
-      // Standardize roles for Anthropic (must be user/assistant only)
-      const formattedMessages: { role: 'user' | 'assistant'; content: string }[] = apiMessages.map((msg: any) => ({
-        role: msg.role === 'assistant' ? ('assistant' as const) : ('user' as const),
-        content: msg.content,
+      // Translate messages history into Gemini content structure
+      const contents = apiMessages.map((msg: any) => ({
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.content }]
       }));
 
-      const response = await anthropic.messages.create({
-        model: 'claude-3-5-sonnet-latest',
-        max_tokens: 500,
-        system: DISPATCH_PROMPT,
-        messages: formattedMessages,
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.5-flash',
+        contents: contents,
+        config: {
+          systemInstruction: DISPATCH_PROMPT,
+        }
       });
 
-      const replyText = response.content
-        .filter((c: any) => c.type === 'text')
-        .map((c: any) => c.text)
-        .join('\n');
-
+      const replyText = response.text || '';
       return res.json({ reply: replyText });
-    } catch (anthropicError: any) {
-      console.error('Anthropic API Call Failed:', anthropicError.message);
+    } catch (geminiError: any) {
+      console.error('Gemini API Call Failed:', geminiError.message);
       return res.json({
-        reply: "📡 DISPATCH [SIGNAL FAULT]: The provided Anthropic API Key is invalid or expired. Please check your `ANTHROPIC_API_KEY` in the AI Studio Secrets panel, verify it has active credits, and try again. For human support: call +91 - 9099906631 or email contact@sosagency.in.",
-        error: anthropicError.message
+        reply: "📡 DISPATCH [SIGNAL FAULT]: The AI communication satellite experienced a momentary glitch. Please verify your `GEMINI_API_KEY` in the Secrets panel, or contact our support grid at +91 - 9099906631 / contact@sosagency.in.",
+        error: geminiError.message
       });
     }
 
