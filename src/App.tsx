@@ -23,8 +23,25 @@ import Logo from './components/Logo';
 import VelluxiaVisualizer from './components/VelluxiaVisualizer';
 import GujaratPanthersVisualizer from './components/GujaratPanthersVisualizer';
 import BeingBeyondVisualizer from './components/BeingBeyondVisualizer';
+import QuotationDashboard from './components/QuotationDashboard';
 
 export default function App() {
+  // Simple client-side routing state
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
+
+  const navigateTo = (to: string) => {
+    window.history.pushState({}, '', to);
+    setCurrentPath(to);
+  };
+
   // Terminal states
   const [bootStep, setBootStep] = useState(0);
   const [bootLines, setBootLines] = useState<string[]>([]);
@@ -221,6 +238,12 @@ export default function App() {
     setFormSubmitted(true);
   };
 
+  if (currentPath === '/admin' || currentPath === '/login' || currentPath === '/quotation' || currentPath === '/quotations') {
+    return (
+      <QuotationDashboard onBackToMain={() => navigateTo('/')} />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#8B0000] text-white font-mono flex flex-col selection:bg-[#FF3B30] selection:text-white overflow-x-hidden">
       
@@ -230,11 +253,18 @@ export default function App() {
       <header className="sticky top-0 z-50 bg-[#0A0A0A] border-b border-neutral-900 px-4 py-3.5 md:px-8 flex justify-between items-center select-none shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
         <Logo dotSize="w-3 h-3 md:w-3.5 md:h-3.5" textSize="text-lg md:text-xl" />
 
-        <div className="flex items-center gap-6">
-          <div className="text-[10px] opacity-60 tracking-[0.2em] text-right uppercase text-white/80 hidden sm:block">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <div className="text-[10px] opacity-60 tracking-[0.2em] text-right uppercase text-white/80 hidden lg:block">
             Signal Strength: Optimized<br/>
             Latency: 14ms
           </div>
+          {/* Sales Quotation Panel */}
+          <button
+            onClick={() => navigateTo('/admin')}
+            className="px-3 py-1.5 border border-[#FF3B30] text-[#FF3B30] text-[11px] hover:bg-[#FF3B30] hover:text-white bg-transparent transition-colors uppercase font-bold cursor-pointer"
+          >
+            [SALES] ADMIN
+          </button>
           {/* Escape Human Mode Switch */}
           <button
             onClick={() => scrollToSection('offline-form')}
@@ -1177,6 +1207,7 @@ export default function App() {
             SESSION SECURED. // SOS AGENCY © 2026. ALL TELEMETRY PROTECTED.
           </div>
           <div className="flex gap-4">
+            <span onClick={() => navigateTo('/admin')} className="hover:text-white cursor-pointer font-bold text-[#FF3B30]">[SALES_PORTAL]</span>
             <span className="hover:text-white cursor-pointer">[SECURE_PROTOCOL]</span>
             <span className="hover:text-white cursor-pointer">[COOKIES_BYPASS]</span>
           </div>

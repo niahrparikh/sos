@@ -22,3 +22,30 @@ export interface ChatMessageData {
   timestamp: string;
   isBootSeq?: boolean;
 }
+
+export interface QuotationItem {
+  id: string;
+  name: string;
+  description: string;
+  quantity: number;
+  price: number;
+}
+
+export interface Quotation {
+  id: string;
+  quotationNo: string;
+  clientName: string;
+  clientEmail: string;
+  clientAddress: string;
+  date: string;
+  expiryDate: string;
+  items: QuotationItem[];
+  subtotal: number;
+  taxRate: number;
+  taxAmount: number;
+  total: number;
+  currency: string;
+  terms: string;
+  notes: string;
+  status: 'draft' | 'sent' | 'paid';
+}

@@ -40,3 +40,49 @@ html, body {
   background: rgba(255, 59, 48, 0.8);
 }
 
+/* Professional Print Styles for Quotations */
+@media print {
+  /* Hide every part of the workspace */
+  body, html, #root, min-h-screen {
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Hide headers, sidebars, toast and custom control boxes */
+  header, footer, aside, button, select, input[type="button"], .print\:hidden {
+    display: none !important;
+  }
+  
+  /* Make only the quotation sheet fill the printed medium */
+  #printable-quote-sheet {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Make inputs inside print sheets transparent and flat */
+  input, textarea, select {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: black !important;
+    padding: 0 !important;
+    resize: none !important;
+  }
+
+  /* Prevent split of signatures or tables */
+  table, tr, td, .grid {
+    page-break-inside: avoid !important;
+  }
+}
+
