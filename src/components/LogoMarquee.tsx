@@ -45,9 +45,9 @@ export default function LogoMarquee({ id }: LogoMarqueeProps) {
           {doubledLogos.map((logo, index) => (
             <div
               key={`${logo.name}-${index}`}
-              className="flex items-center gap-3 hover:text-[#FF3B30] transition-colors cursor-pointer text-neutral-400 font-mono text-sm md:text-base font-bold tracking-widest uppercase shrink-0"
+              className="flex items-center gap-3 hover:text-[#D4F000] transition-colors cursor-pointer text-neutral-400 font-sans text-sm md:text-base font-extrabold tracking-wider uppercase shrink-0"
             >
-              <span className="text-[#FF3B30] text-xs">◆</span>
+              <span className="text-[#E8368F] text-xs">◆</span>
               <span>{logo.text}</span>
             </div>
           ))}

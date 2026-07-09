@@ -55,15 +55,16 @@ export default function StatCounter({ id, target, suffix = '', label }: StatCoun
     <div
       id={id || `stat-${target}`}
       ref={elementRef}
-      className="bg-[#0A0A0A] border-l-4 border-[#FF3B30] p-5 hover:bg-neutral-900 transition-all select-none text-left"
+      className="bg-[#0A4A3D]/40 border-l-4 border-[#D4F000] p-6 hover:bg-[#0A4A3D]/60 transition-all select-none text-left"
     >
-      <div className="font-mono text-3xl md:text-4xl font-black text-white tracking-tight mb-1">
+      <div className="font-sans text-3xl md:text-5xl font-black text-white tracking-tight mb-2.5 tabular-nums">
         {count}
         {suffix}
       </div>
-      <div className="font-mono text-[9px] text-[#FF3B30] uppercase tracking-[0.15em] font-bold">
+      <div className="font-sans text-[10px] text-[#D4F000] uppercase tracking-wider font-extrabold">
         {label}
       </div>
     </div>
   );
 }
+

@@ -3,31 +3,32 @@ import React from 'react';
 interface LogoProps {
   id?: string;
   className?: string;
-  dotSize?: string; // e.g. "w-2.5 h-2.5"
+  dotSize?: string; // e.g. "w-2 py-2"
   textSize?: string; // e.g. "text-lg md:text-xl"
-  tracking?: string; // e.g. "tracking-wider"
+  isLightBg?: boolean; // If true, renders light bg variant (dark text + pink dot)
 }
 
 export default function Logo({
   id,
   className = '',
   dotSize = 'w-2.5 h-2.5 md:w-3 md:h-3',
-  textSize = 'text-lg md:text-xl',
-  tracking = 'tracking-wider'
+  textSize = 'text-xl md:text-2xl',
+  isLightBg = false
 }: LogoProps) {
+  const textColor = isLightBg ? 'text-[#111111]' : 'text-white';
+  const dotColor = isLightBg ? 'bg-[#E8368F]' : 'bg-[#D4F000]';
+
   return (
     <div
       id={id || 'sos-logo'}
-      className={`inline-flex items-center gap-2 md:gap-2.5 select-none font-mono ${className}`}
+      className={`inline-flex items-center gap-1.5 select-none font-sans ${className}`}
     >
-      {/* Precision Emergency Dot Indicator */}
-      <span className={`rounded-full bg-[#FF3B30] ${dotSize} shrink-0 animate-pulse shadow-[0_0_10px_rgba(255,59,48,0.7)]`} />
-      
-      {/* Brand Text Elements */}
-      <div className={`flex items-center font-black ${textSize} ${tracking} leading-none uppercase`}>
-        <span className="text-[#FF3B30]">SOS</span>
-        <span className="text-neutral-500 font-medium ml-1.5 md:ml-2">AGENCY</span>
+      <div className={`flex items-baseline font-extrabold ${textSize} tracking-tighter leading-none`}>
+        <span className={textColor}>SOS</span>
+        {/* The trademark square dot */}
+        <span className={`${dotColor} ${dotSize} ml-1 inline-block shrink-0`} style={{ borderRadius: '0px' }} />
       </div>
     </div>
   );
 }
+

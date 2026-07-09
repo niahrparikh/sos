@@ -11,6 +11,18 @@ interface CaseFileCardProps {
 }
 
 export default function CaseFileCard({ id, caseFile, index, onViewDetails }: CaseFileCardProps) {
+  // Rotating left border colors: pink, lime, teal
+  const borderColors = ['border-[#E8368F]', 'border-[#D4F000]', 'border-[#0E6B58]'];
+  const leftBorderColor = borderColors[index % 3];
+
+  // Alternating background colors: Cream (#F5F5F0), White (#FFFFFF)
+  const bgColors = ['bg-[#F5F5F0]', 'bg-white'];
+  const cardBg = bgColors[index % 2];
+
+  // Accent text colors based on the left border to tie visual systems together
+  const accentTextColors = ['text-[#E8368F]', 'text-[#0E6B58]', 'text-[#0E6B58]'];
+  const accentText = accentTextColors[index % 3];
+
   return (
     <motion.div
       id={id || `case-card-${caseFile.id}`}
@@ -18,46 +30,46 @@ export default function CaseFileCard({ id, caseFile, index, onViewDetails }: Cas
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="bg-[#0A0A0A] border-l-4 border-[#FF3B30] border-r border-t border-b border-neutral-900 p-5 rounded-none flex flex-col justify-between hover:border-neutral-800 transition-all group hover:shadow-[0_4px_24px_rgba(255,59,48,0.05)] select-none"
+      className={`${cardBg} border-l-4 ${leftBorderColor} border-r border-t border-b border-neutral-200/60 p-6 rounded-[6px] flex flex-col justify-between hover:shadow-lg transition-all group select-none`}
     >
       <div>
         {/* Case File Badge */}
         <div className="flex items-center justify-between mb-4">
-          <span className="font-mono text-[10px] font-bold text-[#FF3B30] tracking-widest uppercase bg-red-950/40 border border-red-900/60 px-2 py-0.5 rounded-none">
+          <span className="font-mono text-[10px] font-bold text-[#0A4A3D] tracking-widest uppercase bg-[#0A4A3D]/5 border border-[#0A4A3D]/20 px-2 py-0.5 rounded-[4px]">
             {caseFile.number}
           </span>
           <span className="font-mono text-[10px] text-neutral-500 tracking-wider">
-            STATUS: SECURED // RETRIEVED
+            STATUS: SECURED
           </span>
         </div>
 
         {/* Client */}
-        <div className="mb-3">
-          <label className="font-mono text-[9px] uppercase text-[#FF3B30] block tracking-widest font-bold">CLIENT SYSTEM</label>
-          <span className="font-mono text-base font-black text-white group-hover:text-[#FF3B30] uppercase italic tracking-wider transition-colors">
+        <div className="mb-4">
+          <label className="font-sans text-[10px] uppercase text-[#0E6B58] block tracking-widest font-extrabold mb-1">CLIENT SYSTEM</label>
+          <span className="font-sans text-xl font-extrabold text-[#111111] group-hover:text-[#0E6B58] uppercase tracking-tight transition-colors">
             {caseFile.client}
           </span>
         </div>
 
         {/* Incident description */}
-        <div className="mb-4">
-          <label className="font-mono text-[10px] uppercase text-neutral-400 block tracking-widest font-bold">INCIDENT SUMMARY</label>
-          <p className="font-mono text-xs sm:text-sm text-neutral-200 leading-relaxed mt-1.5">
+        <div className="mb-5">
+          <label className="font-sans text-[10px] uppercase text-neutral-500 block tracking-widest font-extrabold mb-1">INCIDENT SUMMARY</label>
+          <p className="font-sans text-xs sm:text-sm text-[#111111]/90 leading-relaxed font-medium">
             {caseFile.incident}
           </p>
         </div>
 
         {/* Response Time */}
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-5 flex items-center justify-between">
           <div>
-            <label className="font-mono text-[10px] uppercase text-neutral-400 block tracking-widest font-bold">RESPONSE TIME</label>
-            <span className="font-mono text-xs sm:text-sm text-[#FF3B30] font-bold">
+            <label className="font-sans text-[10px] uppercase text-neutral-500 block tracking-widest font-extrabold">RESPONSE TIME</label>
+            <span className="font-mono text-sm text-[#0E6B58] font-bold">
               ⚡ {caseFile.responseTime}
             </span>
           </div>
           <div className="text-right">
-            <label className="font-mono text-[10px] uppercase text-neutral-400 block tracking-widest font-bold">RESOLUTION</label>
-            <span className="font-mono text-xs sm:text-sm text-green-500 font-bold">
+            <label className="font-sans text-[10px] uppercase text-neutral-500 block tracking-widest font-extrabold">RESOLUTION</label>
+            <span className="font-sans text-xs sm:text-sm text-green-700 font-bold">
               STABLE
             </span>
           </div>
@@ -66,22 +78,22 @@ export default function CaseFileCard({ id, caseFile, index, onViewDetails }: Cas
 
       <div>
         {/* Outcome & Progress Bar */}
-        <div className="mb-5 bg-neutral-950 p-3 rounded-none border border-neutral-900">
+        <div className="mb-5 bg-neutral-100/70 p-4 rounded-[4px] border border-neutral-200/50">
           <div className="flex justify-between items-center mb-1.5 select-none">
-            <span className="font-mono text-[10px] text-neutral-400 tracking-wider">BRAND RECONSTRUCTION STRENGTH</span>
-            <span className="font-mono text-sm text-[#FF3B30] font-bold">{caseFile.outcome}%</span>
+            <span className="font-sans text-[10px] text-neutral-500 font-bold tracking-wider">BRAND RECONSTRUCTION STRENGTH</span>
+            <span className="font-mono text-sm text-[#0E6B58] font-bold">{caseFile.outcome}%</span>
           </div>
           {/* Bar */}
-          <div className="w-full bg-neutral-900 h-1.5 rounded-none overflow-hidden">
+          <div className="w-full bg-neutral-200 h-1.5 rounded-none overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               whileInView={{ width: `${caseFile.outcome}%` }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="bg-[#FF3B30] h-full"
+              className="bg-[#0E6B58] h-full"
             />
           </div>
-          <p className="font-mono text-xs sm:text-sm text-neutral-300 mt-2 leading-relaxed">
+          <p className="font-sans text-xs text-neutral-600 font-medium mt-2.5 leading-relaxed">
             {caseFile.outcomeText}
           </p>
         </div>
@@ -99,7 +111,7 @@ export default function CaseFileCard({ id, caseFile, index, onViewDetails }: Cas
               elem?.scrollIntoView({ behavior: 'smooth' });
             }
           }}
-          className="inline-flex items-center gap-1 font-mono text-xs text-white hover:text-[#FF3B30] font-bold uppercase tracking-wider transition-colors mt-1 cursor-pointer bg-transparent border-none p-0"
+          className="inline-flex items-center gap-1.5 font-sans text-xs text-[#0A4A3D] hover:text-[#E8368F] font-extrabold uppercase tracking-wider transition-colors mt-1 cursor-pointer bg-transparent border-none p-0"
         >
           <span>[VIEW FULL CASE FILE →]</span>
         </button>
@@ -107,3 +119,4 @@ export default function CaseFileCard({ id, caseFile, index, onViewDetails }: Cas
     </motion.div>
   );
 }
+

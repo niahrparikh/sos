@@ -13,7 +13,7 @@ interface TerminalWindowProps {
 
 export default function TerminalWindow({
   id,
-  title = 'sos-agency — DISTRESS TERMINAL',
+  title = 'SOS AGENCY — DISTRESS TERMINAL',
   children,
   className = '',
   onClose,
@@ -24,10 +24,10 @@ export default function TerminalWindow({
   return (
     <div
       id={id || 'terminal-window'}
-      className={`relative rounded-lg border border-[#FF3B30] bg-[#0A0A0A] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col ${className}`}
+      className={`relative rounded-lg border border-[#0E6B58] bg-[#001c17]/90 shadow-[0_25px_60px_-15px_rgba(10,74,61,0.5)] overflow-hidden flex flex-col ${className}`}
     >
       {/* Browser Chrome Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-[#111] border-b border-[#222] select-none h-8">
+      <div className="flex items-center justify-between px-4 py-2 bg-[#0A4A3D]/40 border-b border-[#0E6B58]/20 select-none h-9">
         {/* Chrome Dots with functional hover triggers */}
         <div className="flex items-center gap-2 z-30">
           <button
@@ -37,7 +37,7 @@ export default function TerminalWindow({
               onClose?.();
             }}
             title="Disconnect Terminal [Close]"
-            className="w-3 h-3 rounded-full bg-[#FF3B30] hover:scale-110 active:scale-95 transition-transform flex items-center justify-center cursor-pointer relative group/dot"
+            className="w-3 h-3 rounded-full bg-[#E8368F] hover:scale-110 active:scale-95 transition-transform flex items-center justify-center cursor-pointer relative group/dot"
           >
             <span className="absolute inset-0 bg-white/20 rounded-full opacity-0 group-hover/dot:opacity-100 transition-opacity" />
           </button>
@@ -48,7 +48,7 @@ export default function TerminalWindow({
               onMinimize?.();
             }}
             title="Minimize Terminal [Collapse]"
-            className="w-3 h-3 rounded-full bg-[#FFCC00] hover:scale-110 active:scale-95 transition-transform flex items-center justify-center cursor-pointer relative group/dot"
+            className="w-3 h-3 rounded-full bg-[#D4F000] hover:scale-110 active:scale-95 transition-transform flex items-center justify-center cursor-pointer relative group/dot"
           >
             <span className="absolute inset-0 bg-white/20 rounded-full opacity-0 group-hover/dot:opacity-100 transition-opacity" />
           </button>
@@ -59,19 +59,19 @@ export default function TerminalWindow({
               onMaximize?.();
             }}
             title={state === 'maximized' ? "Restore Window Size" : "Fullscreen [Maximize]"}
-            className="w-3 h-3 rounded-full bg-[#00CC44] hover:scale-110 active:scale-95 transition-transform flex items-center justify-center cursor-pointer relative group/dot"
+            className="w-3 h-3 rounded-full bg-[#0E6B58] hover:scale-110 active:scale-95 transition-transform flex items-center justify-center cursor-pointer relative group/dot"
           >
             <span className="absolute inset-0 bg-white/20 rounded-full opacity-0 group-hover/dot:opacity-100 transition-opacity" />
           </button>
         </div>
         
         {/* Title */}
-        <div className="text-[10px] font-mono font-bold tracking-wider text-neutral-400 select-none text-center flex-1">
+        <div className="text-[10px] font-sans font-bold tracking-wider text-neutral-300 select-none text-center flex-1">
           {title}
         </div>
         
         {/* Extra element to balance spacing */}
-        <div className="w-12 text-right font-mono text-[9px] text-[#FF3B30] uppercase font-bold tracking-widest hidden md:block animate-pulse">
+        <div className="w-16 text-right font-mono text-[9px] text-[#D4F000] uppercase font-bold tracking-widest hidden md:block animate-pulse">
           {state === 'maximized' ? 'FS_LINK' : 'LIVE_CONN'}
         </div>
       </div>

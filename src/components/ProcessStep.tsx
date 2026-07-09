@@ -34,7 +34,7 @@ export default function ProcessStep() {
     <div className="relative w-full max-w-6xl mx-auto px-4 select-none">
       {/* Line connecting the steps (desktop only) */}
       <div className="absolute top-[34px] left-[10%] right-[10%] h-0.5 bg-neutral-900 hidden lg:block z-0">
-        <div className="h-full bg-gradient-to-r from-[#FF3B30] via-red-600 to-green-600 w-3/4" />
+        <div className="h-full bg-gradient-to-r from-[#E8368F] via-[#0E6B58] to-[#D4F000] w-3/4" />
       </div>
 
       {/* Grid of Steps */}
@@ -50,28 +50,28 @@ export default function ProcessStep() {
           >
             {/* Blinking Beacon / Icon Circle */}
             <div className="relative mb-5 flex items-center justify-center">
-              <div className="w-12 h-12 bg-[#0A0A0A] border-2 border-neutral-800 rounded-none flex items-center justify-center group-hover:border-[#FF3B30] transition-colors shadow-lg">
-                <span className="font-mono text-xs font-extrabold text-[#FF3B30]">{index + 1}</span>
+              <div className="w-12 h-12 bg-[#0A4A3D]/30 border-2 border-[#0E6B58]/30 rounded-none flex items-center justify-center group-hover:border-[#D4F000] transition-colors shadow-lg">
+                <span className="font-sans text-xs font-extrabold text-[#D4F000]">{index + 1}</span>
               </div>
               {/* Blinking signal dot */}
               <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${index === 3 ? 'bg-green-400' : 'bg-red-400'} opacity-75`}></span>
-                <span className={`relative inline-flex rounded-full h-2 w-2 ${index === 3 ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${index === 3 ? 'bg-[#D4F000]' : 'bg-[#E8368F]'} opacity-75`}></span>
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${index === 3 ? 'bg-[#D4F000]' : 'bg-[#E8368F]'}`}></span>
               </span>
             </div>
 
             {/* Title & Timestamp */}
             <div className="mb-2">
-              <span className="font-mono text-xs font-bold text-neutral-500 block mb-1">
+              <span className="font-mono text-xs font-bold text-neutral-400 block mb-1">
                 {step.timestamp}
               </span>
-              <h4 className="font-mono text-sm md:text-base font-extrabold text-white tracking-widest group-hover:text-[#FF3B30] transition-colors">
+              <h4 className="font-sans text-sm md:text-base font-extrabold text-white tracking-wide group-hover:text-[#D4F000] transition-colors">
                 {step.title}
               </h4>
             </div>
 
             {/* Description */}
-            <p className="font-mono text-xs sm:text-sm text-neutral-300 leading-relaxed max-w-xs lg:max-w-none mt-1">
+            <p className="font-sans text-xs sm:text-sm text-neutral-300 leading-relaxed max-w-xs lg:max-w-none mt-1">
               {step.description}
             </p>
           </motion.div>

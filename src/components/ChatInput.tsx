@@ -39,9 +39,9 @@ export default function ChatInput({
     <form
       id={id || 'chat-input-form'}
       onSubmit={handleSubmit}
-      className="flex items-center gap-2 border border-[#333] bg-[#151515] p-1 relative focus-within:border-[#FF3B30] transition-colors w-full"
+      className="flex items-center gap-2 border border-neutral-800 bg-[#0E6B58]/10 p-1 relative focus-within:border-[#D4F000] transition-colors w-full rounded-[4px]"
     >
-      <span className="font-mono text-[#FF3B30] pl-3 select-none">█</span>
+      <span className="font-sans text-[#D4F000] pl-3 select-none text-xs">█</span>
       <input
         type="text"
         value={inputValue}
@@ -49,12 +49,12 @@ export default function ChatInput({
         onFocus={onFocus}
         disabled={disabled}
         placeholder={placeholder}
-        className="flex-1 bg-transparent text-white font-mono text-sm focus:outline-none placeholder-neutral-600 disabled:opacity-50 py-2 min-w-0"
+        className="flex-1 bg-transparent text-white font-sans text-xs sm:text-sm focus:outline-none placeholder-neutral-500 disabled:opacity-50 py-2.5 min-w-0"
       />
       <button
         type="submit"
         disabled={disabled || !inputValue.trim()}
-        className="px-4 sm:px-6 py-2 bg-[#FF3B30] hover:bg-red-700 disabled:bg-[#1A1A1A] disabled:text-neutral-700 disabled:border-neutral-800 text-white font-mono text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 transition-all cursor-pointer disabled:cursor-not-allowed shrink-0"
+        className="px-4 sm:px-6 py-2.5 bg-[#D4F000] hover:bg-[#E8368F] disabled:bg-neutral-900 disabled:text-neutral-600 disabled:border-neutral-800 text-[#111111] hover:text-white font-sans text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer disabled:cursor-not-allowed rounded-[4px] shrink-0"
       >
         <span>SEND</span>
         <SendHorizonal size={12} />

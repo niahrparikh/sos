@@ -33,32 +33,32 @@ export default function ChatMessage({ id, role, content, timestamp, isNew = fals
   return (
     <div
       id={id || `msg-${timestamp}`}
-      className="flex gap-3 font-mono text-xs md:text-sm leading-relaxed transition-all duration-200"
+      className="flex gap-3 font-sans text-xs md:text-sm leading-relaxed transition-all duration-200"
     >
       {/* Sender Avatar Block */}
-      <div className={`w-8 h-8 flex-shrink-0 flex items-center justify-center font-bold select-none ${
-        isBot ? 'bg-[#FF3B30] text-white' : 'bg-neutral-800 text-[#FF3B30]'
+      <div className={`w-8 h-8 rounded-[4px] flex-shrink-0 flex items-center justify-center font-extrabold select-none ${
+        isBot ? 'bg-[#D4F000] text-[#111111]' : 'bg-[#0E6B58] text-white'
       }`}>
         {isBot ? 'D' : 'U'}
       </div>
 
       {/* Bubble Content */}
-      <div className={`flex-1 p-3.5 rounded-r-lg rounded-bl-lg border ${
+      <div className={`flex-1 p-3.5 rounded-[4px] border ${
         isBot
-          ? 'bg-[#151515] border-neutral-800 text-white'
-          : 'bg-neutral-900 border-neutral-850 text-gray-100'
+          ? 'bg-[#0A4A3D]/25 border-[#0E6B58]/30 text-white'
+          : 'bg-[#0E6B58]/5 border-[#0E6B58]/20 text-neutral-100'
       }`}>
         <div className="flex items-center justify-between border-b border-neutral-800/40 pb-1.5 mb-2 select-none">
-          <span className={`font-bold tracking-wider text-[10px] uppercase ${isBot ? 'text-[#FF3B30]' : 'text-neutral-400'}`}>
+          <span className={`font-extrabold tracking-wider text-[10px] uppercase ${isBot ? 'text-[#D4F000]' : 'text-[#E8368F]'}`}>
             {isBot ? 'DISPATCH_OPERATOR' : 'OUTBOUND_SIGNAL'}
           </span>
-          <span className="text-neutral-500 text-[9px]">{timestamp}</span>
+          <span className="text-neutral-400 text-[9px] font-mono">{timestamp}</span>
         </div>
         
-        <div className="whitespace-pre-wrap font-mono leading-relaxed">
+        <div className="whitespace-pre-wrap font-sans leading-relaxed text-xs sm:text-sm font-medium">
           {displayedText}
           {isNew && isBot && displayedText.length < content.length && (
-            <span className="inline-block w-1.5 h-3.5 bg-[#FF3B30] ml-0.5 animate-pulse" />
+            <span className="inline-block w-1.5 h-3.5 bg-[#D4F000] ml-0.5 animate-pulse" />
           )}
         </div>
       </div>
