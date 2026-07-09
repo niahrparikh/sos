@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { playTapSound } from '../lib/audio';
 
 interface StatCounterProps {
   id?: string;
@@ -52,17 +53,26 @@ export default function StatCounter({ id, target, suffix = '', label }: StatCoun
   }, [hasStarted, target]);
 
   return (
-    <div
-      id={id || `stat-${target}`}
-      ref={elementRef}
-      className="bg-[#0A4A3D]/40 border-l-4 border-[#D4F000] p-6 hover:bg-[#0A4A3D]/60 transition-all select-none text-left"
+    <div 
+      className="relative group/stat select-none cursor-pointer"
+      onClick={() => playTapSound()}
     >
-      <div className="font-sans text-3xl md:text-5xl font-black text-white tracking-tight mb-2.5 tabular-nums">
-        {count}
-        {suffix}
-      </div>
-      <div className="font-sans text-[10px] text-[#D4F000] uppercase tracking-wider font-extrabold">
-        {label}
+      {/* Pink sliding underlay */}
+      <div className="absolute inset-0 bg-[#E8368F] rounded-[4px] translate-x-1.5 translate-y-1.5 group-hover/stat:translate-x-2.5 group-hover/stat:translate-y-2.5 transition-transform duration-200 pointer-events-none z-0" />
+      
+      {/* Main card box */}
+      <div
+        id={id || `stat-${target}`}
+        ref={elementRef}
+        className="relative bg-[#0A4A3D] border border-[#0E6B58]/35 border-l-4 border-l-[#D4F000] p-6 hover:bg-[#0A4A3D]/80 group-hover/stat:-translate-x-0.5 group-hover/stat:-translate-y-0.5 transition-all duration-200 text-left z-10 rounded-[4px]"
+      >
+        <div className="font-sans text-3xl md:text-5xl font-black text-white tracking-tight mb-2.5 tabular-nums">
+          {count}
+          {suffix}
+        </div>
+        <div className="font-sans text-[10px] text-[#D4F000] uppercase tracking-wider font-extrabold">
+          {label}
+        </div>
       </div>
     </div>
   );

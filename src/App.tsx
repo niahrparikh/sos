@@ -5,6 +5,7 @@ import { ShieldAlert, Terminal, MessageSquare, ArrowDown, ArrowUp, Send, CheckCi
 import { ChatMessageData } from './types';
 import { CASE_FILES } from './data/caseFiles';
 import { TESTIMONIALS } from './data/testimonials';
+import { playClickSound, playTapSound, playSuccessSound, playWarningSound } from './lib/audio';
 
 // Reusable components
 import TerminalWindow from './components/TerminalWindow';
@@ -284,10 +285,10 @@ export default function App() {
 
         {/* 4 links max as requested in Page 16 Guidelines */}
         <nav className="hidden md:flex items-center gap-6 text-xs uppercase font-extrabold text-[#F5F5F0]">
-          <button onClick={() => scrollToSection('chat-section')} className="hover:text-[#D4F000] transition-colors cursor-pointer">DIAGNOSTICS</button>
-          <button onClick={() => scrollToSection('case-files')} className="hover:text-[#D4F000] transition-colors cursor-pointer">PROOF POINTS</button>
-          <button onClick={() => scrollToSection('process')} className="hover:text-[#D4F000] transition-colors cursor-pointer">PROTOCOL</button>
-          <button onClick={() => scrollToSection('offline-form')} className="hover:text-[#D4F000] transition-colors cursor-pointer">OFFLINE CHANNEL</button>
+          <button onClick={() => { playClickSound(); scrollToSection('chat-section'); }} className="hover:text-[#D4F000] transition-colors cursor-pointer">DIAGNOSTICS</button>
+          <button onClick={() => { playClickSound(); scrollToSection('case-files'); }} className="hover:text-[#D4F000] transition-colors cursor-pointer">PROOF POINTS</button>
+          <button onClick={() => { playClickSound(); scrollToSection('process'); }} className="hover:text-[#D4F000] transition-colors cursor-pointer">PROTOCOL</button>
+          <button onClick={() => { playClickSound(); scrollToSection('offline-form'); }} className="hover:text-[#D4F000] transition-colors cursor-pointer">OFFLINE CHANNEL</button>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -316,9 +317,34 @@ export default function App() {
             <ShieldAlert size={14} className="animate-bounce text-[#E8368F]" />
             <span>CRITICAL BRANDING STATUS: ACTIVE EMERGENCY</span>
           </motion.div>
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-none tracking-tight uppercase select-none text-[#F5F5F0]">
-            BRAND IN TROUBLE?<br />
-            <span className="text-[#E8368F] italic">SEND SOS.</span>
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-none tracking-tight uppercase select-none text-[#F5F5F0] cursor-default">
+            <motion.span 
+              className="inline-block"
+              onMouseEnter={() => playTapSound()}
+              whileHover={{ 
+                scale: 1.05, 
+                rotate: -1, 
+                color: "#D4F000",
+                textShadow: "0 0 12px rgba(212,240,0,0.45)" 
+              }}
+              transition={{ type: "spring", stiffness: 450, damping: 10 }}
+            >
+              BRAND IN TROUBLE?
+            </motion.span>
+            <br />
+            <motion.span 
+              className="text-[#E8368F] italic inline-block mt-1"
+              onMouseEnter={() => playTapSound()}
+              whileHover={{ 
+                scale: 1.15, 
+                skewX: -12,
+                color: "#D4F000",
+                textShadow: "0 0 15px rgba(212,240,0,0.55)"
+              }}
+              transition={{ type: "spring", stiffness: 350, damping: 8 }}
+            >
+              SEND SOS.
+            </motion.span>
           </h1>
           <p className="font-sans text-sm md:text-base text-neutral-200 mt-3 max-w-2xl mx-auto leading-relaxed font-medium">
             Connect immediately to Dispatch, our senior creative AI agent, trained to triage identity, positioning, and visual debt under high pressure.
@@ -349,6 +375,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    playSuccessSound();
                     setTerminalState('normal');
                     forceScrollToBottom('smooth');
                   }}
@@ -361,6 +388,7 @@ export default function App() {
           ) : terminalState === 'minimized' ? (
             <div
               onClick={() => {
+                playSuccessSound();
                 setTerminalState('normal');
                 forceScrollToBottom('smooth');
               }}
@@ -376,6 +404,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={(e) => {
+                  playSuccessSound();
                   e.stopPropagation();
                   setTerminalState('normal');
                   forceScrollToBottom('smooth');
@@ -461,7 +490,10 @@ export default function App() {
                     <div className="flex flex-wrap items-center gap-1.5 border-b border-neutral-900 pb-2 mb-3 select-none">
                       <button
                         type="button"
-                        onClick={() => setTerminalTab('chat')}
+                        onClick={() => {
+                          playClickSound();
+                          setTerminalTab('chat');
+                        }}
                         className={`px-3 py-1.5 font-sans text-[10px] md:text-xs font-extrabold uppercase tracking-wider border rounded-[4px] transition-all cursor-pointer ${
                           terminalTab === 'chat'
                             ? 'bg-[#D4F000] text-[#111111] border-transparent shadow-[0_0_8px_rgba(212,240,0,0.25)]'
@@ -472,7 +504,10 @@ export default function App() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setTerminalTab('cases')}
+                        onClick={() => {
+                          playClickSound();
+                          setTerminalTab('cases');
+                        }}
                         className={`px-3 py-1.5 font-sans text-[10px] md:text-xs font-extrabold uppercase tracking-wider border rounded-[4px] transition-all cursor-pointer ${
                           terminalTab === 'cases'
                             ? 'bg-[#D4F000] text-[#111111] border-transparent shadow-[0_0_8px_rgba(212,240,0,0.25)]'
@@ -483,7 +518,10 @@ export default function App() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setTerminalTab('contact')}
+                        onClick={() => {
+                          playClickSound();
+                          setTerminalTab('contact');
+                        }}
                         className={`px-3 py-1.5 font-sans text-[10px] md:text-xs font-extrabold uppercase tracking-wider border rounded-[4px] transition-all cursor-pointer ${
                           terminalTab === 'contact'
                             ? 'bg-[#D4F000] text-[#111111] border-transparent shadow-[0_0_8px_rgba(212,240,0,0.25)]'
@@ -1007,10 +1045,15 @@ export default function App() {
             </p>
           </div>
 
-          <div className="bg-[#001c17] border-2 border-[#0E6B58]/35 rounded-[6px] p-6 md:p-8 relative">
-            <div className="absolute top-3 right-4 font-mono text-[9px] text-neutral-600 select-none">
-              ENCRYPTED_SIGNAL_UPLINK
-            </div>
+          <div className="relative group/offline max-w-3xl mx-auto">
+            {/* Pink sliding box underlay */}
+            <div className="absolute inset-0 bg-[#E8368F] rounded-[6px] translate-x-2.5 translate-y-2.5 group-hover/offline:translate-x-4 group-hover/offline:translate-y-4 transition-transform duration-300 ease-out pointer-events-none z-0 shadow-lg" />
+            
+            {/* The actual form container */}
+            <div className="relative bg-[#001c17] border-2 border-[#0E6B58]/35 rounded-[6px] p-6 md:p-8 group-hover/offline:-translate-x-1 group-hover/offline:-translate-y-1 transition-transform duration-300 ease-out z-10">
+              <div className="absolute top-3 right-4 font-mono text-[9px] text-neutral-600 select-none">
+                ENCRYPTED_SIGNAL_UPLINK
+              </div>
 
             {formSubmitted ? (
               <motion.div
@@ -1103,6 +1146,7 @@ export default function App() {
                 <div className="pt-2">
                   <button
                     type="submit"
+                    onClick={() => playSuccessSound()}
                     className="w-full relative group px-6 py-3 font-sans text-sm uppercase tracking-widest font-extrabold transition-all duration-300 border-2 border-[#D4F000] text-[#111111] bg-[#D4F000] hover:text-white hover:bg-transparent overflow-hidden rounded-[4px] cursor-pointer"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
@@ -1113,6 +1157,7 @@ export default function App() {
                 </div>
               </form>
             )}
+          </div>
           </div>
         </div>
       </section>

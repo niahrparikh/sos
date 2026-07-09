@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { SendHorizonal } from 'lucide-react';
+import { playSuccessSound } from '../lib/audio';
 
 interface ChatInputProps {
   id?: string;
@@ -23,6 +24,7 @@ export default function ChatInput({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || disabled) return;
+    playSuccessSound();
     onSend(inputValue.trim());
     setInputValue('');
   };
