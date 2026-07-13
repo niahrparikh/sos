@@ -26,11 +26,17 @@ import GujaratPanthersVisualizer from './components/GujaratPanthersVisualizer';
 import BeingBeyondVisualizer from './components/BeingBeyondVisualizer';
 import QuotationDashboard from './components/QuotationDashboard';
 import ConsentBanner from './components/ConsentBanner';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   // Simple client-side routing state
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [currentHash, setCurrentHash] = useState(window.location.hash);
+
+  // Guarantee page loads at the absolute top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -208,44 +214,167 @@ export default function App() {
     setIsTyping(true);
     setMessageCount((prev) => prev + 1);
 
-    // 2. Query Full-stack Express Backend
-    try {
-      const payload = {
-        messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content }))
-      };
+    // 2. Resolve response locally (instant, fully reliable, zero-API dependency)
+    setTimeout(() => {
+      const lower = text.toLowerCase().trim();
+      let reply = '';
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      // Contact / Call / Email / Human
+      if (
+        lower.includes('contact') || 
+        lower.includes('call') || 
+        lower.includes('phone') || 
+        lower.includes('email') || 
+        lower.includes('number') || 
+        lower.includes('human') || 
+        lower.includes('talk') || 
+        lower.includes('reach') ||
+        lower.includes('connect') ||
+        lower.includes('support') ||
+        lower.includes('address') ||
+        lower.includes('where') ||
+        lower.includes('mumbai') ||
+        lower.includes('location')
+      ) {
+        reply = `DISPATCH: Connection direct to Emergency Response Unit. 
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+📞 **HOTLINE**: +91 - 9099906631
+✉️ **EMAIL**: contact@sosagency.in
+📍 **STATION**: Lokhandwala, Mumbai, MH, India
+
+Call or email us directly, or scroll down to the **Offline Channel** form to submit a physical dispatch request. We respond within 120 minutes.`;
+      }
+      // Services / Work / Capabilities
+      else if (
+        lower.includes('service') || 
+        lower.includes('what do you do') || 
+        lower.includes('offer') || 
+        lower.includes('tier') || 
+        lower.includes('rescue') || 
+        lower.includes('sprint') || 
+        lower.includes('launch') || 
+        lower.includes('logo') || 
+        lower.includes('branding') || 
+        lower.includes('rebrand') ||
+        lower.includes('advertising') ||
+        lower.includes('marketing') ||
+        lower.includes('social') ||
+        lower.includes('campaign')
+      ) {
+        reply = `DISPATCH: Active tactical branding & digital advertising programs:
+
+• **Rescue Sprint** (Solo/small brands in acute crisis, 2-3 weeks)
+• **Full Rebrand** (For established entities outgrowing their identity, 6-8 weeks)
+• **Launch Kit** (For new brands starting from zero, 4-6 weeks)
+• **Brand Tune-Up** (High-intensity creative optimization, 3-4 weeks)
+• **Performance Marketing & Ads** (B2C customer acquisition, ongoing)
+
+Reply with the program you need to begin immediate diagnostics.`;
+      }
+      // Pricing / Cost / Quote
+      else if (
+        lower.includes('price') || 
+        lower.includes('pricing') || 
+        lower.includes('cost') || 
+        lower.includes('quote') || 
+        lower.includes('budget') || 
+        lower.includes('how much') || 
+        lower.includes('rate') || 
+        lower.includes('fee')
+      ) {
+        reply = `DISPATCH: All operations are customized based on current brand threat level and scope of deployment. 
+
+For an instant, detailed, structured cost estimation with fully customized line-items, click the **Quotation Suite** in the top menu or scroll to the **Offline Channel** form to file your brief. We'll deploy a tactical quotation blueprint immediately.`;
+      }
+      // Portfolio / Work / Proof
+      else if (
+        lower.includes('portfolio') || 
+        lower.includes('work') || 
+        lower.includes('client') || 
+        lower.includes('example') || 
+        lower.includes('case') || 
+        lower.includes('proof') || 
+        lower.includes('show') ||
+        lower.includes('panthers') ||
+        lower.includes('beyond')
+      ) {
+        reply = `DISPATCH: Proof points are online in the database:
+
+• **Gujarat Panthers Visualizer**: Tactical visual reconstruction for the Pro Kabaddi League team.
+• **Being Beyond Wellness**: Calm visual identity system & packaging for holistic wellness.
+
+Scroll down to the **Proof Points** section of the website to view the full interactive design files and case breakdowns.`;
+      }
+      // Process / Method / Speed
+      else if (
+        lower.includes('process') || 
+        lower.includes('how') || 
+        lower.includes('step') || 
+        lower.includes('method') || 
+        lower.includes('timeline') || 
+        lower.includes('duration') || 
+        lower.includes('time') || 
+        lower.includes('deadline') || 
+        lower.includes('urgent') || 
+        lower.includes('fast')
+      ) {
+        reply = `DISPATCH: Tactical timing is prioritized. Depending on your selection:
+• Sprints take **2-3 weeks**.
+• Full rebranding launches in **6-8 weeks**.
+• For extreme emergencies, we have a **48-hour Creative Triage** protocol.
+
+Our process has zero fluff: **Diagnosis ➔ Strategy ➔ Creative Reconstruction ➔ Live Deployment**. Let us know if you need to accelerate.`;
+      }
+      // Socials
+      else if (
+        lower.includes('instagram') || 
+        lower.includes('linkedin') || 
+        lower.includes('facebook') || 
+        lower.includes('social') || 
+        lower.includes('handle')
+      ) {
+        reply = `DISPATCH: Outbound channels verified:
+• **Instagram**: https://www.instagram.com/sosagency.in
+• **LinkedIn**: https://www.linkedin.com/company/sosagency
+• **Facebook**: https://www.facebook.com/sosagency
+
+Follow for brand emergency dispatch logs and behind-the-scenes strategy.`;
+      }
+      // Greetings
+      else if (
+        lower.includes('hello') || 
+        lower.includes('hi') || 
+        lower.includes('hey') || 
+        lower.includes('yo') || 
+        lower.includes('greeting') || 
+        lower.includes('good morning') || 
+        lower.includes('good afternoon') || 
+        lower.includes('good evening')
+      ) {
+        reply = `DISPATCH: Connection established. High-priority creative signal received. 
+
+What brand emergency are we dealing with today? (e.g. need a *rebrand*, *better pricing info*, our *portfolio*, or *direct contact* with a human operator?)`;
+      }
+      // Fallback
+      else {
+        reply = `DISPATCH: Signal acknowledged. To ensure we deploy the perfect creative response unit for your specific scenario:
+
+1. 📞 **Call Hotline**: +91 - 9099906631
+2. ✉️ **Email HQ**: contact@sosagency.in
+3. 📝 **Submit BRIEF**: Scroll down to the **Offline Channel** form to enter your brand details.
+
+Tell us more about your brand (e.g., are you launching a new company, or do you need to rescue a failing narrative?)`;
       }
 
-      const data = await response.json();
-
-      // Append bot response
       const botMsg: ChatMessageData = {
         id: `bot-${Date.now()}`,
         role: 'assistant',
-        content: data.reply || "Signal received, but dispatch translation is weak. Re-routing signal...",
+        content: reply,
         timestamp: getTimestamp(),
       };
       setMessages((prev) => [...prev, botMsg]);
-    } catch (err) {
-      console.error(err);
-      const errorMsg: ChatMessageData = {
-        id: `err-${Date.now()}`,
-        role: 'assistant',
-        content: "DISPATCH [ALERT]: Connection lost or credentials unverified. Skip protocol and reach out directly using [CALL US NOW].",
-        timestamp: getTimestamp(),
-      };
-      setMessages((prev) => [...prev, errorMsg]);
-    } finally {
       setIsTyping(false);
-    }
+    }, 1000);
   };
 
   // Contact form submission state
@@ -1277,6 +1406,7 @@ export default function App() {
       </footer>
 
       <ConsentBanner />
+      <Analytics />
     </div>
   );
 }
