@@ -51,7 +51,7 @@ export default function ChatInput({
         onFocus={onFocus}
         disabled={disabled}
         placeholder={placeholder}
-        className="flex-1 bg-transparent text-white font-sans text-xs sm:text-sm focus:outline-none placeholder-neutral-500 disabled:opacity-50 py-2.5 min-w-0"
+        className="flex-1 bg-transparent text-white font-sans text-base focus:outline-none placeholder-neutral-500 disabled:opacity-50 py-2.5 min-w-0"
       />
       <button
         type="submit"

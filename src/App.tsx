@@ -98,9 +98,6 @@ export default function App() {
   const forceScrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
     // Delay slightly to allow layout changes (like going full screen or adding message nodes) to complete
     setTimeout(() => {
-      if (chatEndRef.current) {
-        chatEndRef.current.scrollIntoView({ behavior });
-      }
       if (chatContainerRef.current) {
         chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
       }
@@ -456,7 +453,7 @@ export default function App() {
                               forceScrollToBottom('smooth');
                             }}
                             placeholder="ENTER BRAND SYSTEM NAME..."
-                            className="bg-neutral-950 border border-[#0E6B58]/55 text-[#D4F000] focus:border-[#D4F000] focus:outline-none px-3.5 py-2.5 rounded text-xs tracking-wider uppercase font-extrabold flex-1 font-sans"
+                            className="bg-neutral-950 border border-[#0E6B58]/55 text-[#D4F000] focus:border-[#D4F000] focus:outline-none px-3.5 py-2.5 rounded text-base tracking-wider uppercase font-extrabold flex-1 font-sans"
                             maxLength={30}
                           />
                           <button
@@ -1088,7 +1085,7 @@ export default function App() {
                     <input
                       required
                       type="text"
-                      className="w-full bg-[#0A4A3D] border border-[#0E6B58]/35 text-white focus:border-[#D4F000] focus:outline-none rounded-[4px] px-3.5 py-2.5 font-sans text-xs tracking-wider font-semibold"
+                      className="w-full bg-[#0A4A3D] border border-[#0E6B58]/35 text-white focus:border-[#D4F000] focus:outline-none rounded-[4px] px-3.5 py-2.5 font-sans text-base tracking-wider font-semibold"
                       placeholder="e.g. Commander Marcus"
                     />
                   </div>
@@ -1099,7 +1096,7 @@ export default function App() {
                     <input
                       required
                       type="text"
-                      className="w-full bg-[#0A4A3D] border border-[#0E6B58]/35 text-white focus:border-[#D4F000] focus:outline-none rounded-[4px] px-3.5 py-2.5 font-sans text-xs tracking-wider font-semibold"
+                      className="w-full bg-[#0A4A3D] border border-[#0E6B58]/35 text-white focus:border-[#D4F000] focus:outline-none rounded-[4px] px-3.5 py-2.5 font-sans text-base tracking-wider font-semibold"
                       placeholder="e.g. Apex Fintech"
                     />
                   </div>
@@ -1113,7 +1110,7 @@ export default function App() {
                     <input
                       required
                       type="email"
-                      className="w-full bg-[#0A4A3D] border border-[#0E6B58]/35 text-white focus:border-[#D4F000] focus:outline-none rounded-[4px] px-3.5 py-2.5 font-sans text-xs tracking-wider font-semibold"
+                      className="w-full bg-[#0A4A3D] border border-[#0E6B58]/35 text-white focus:border-[#D4F000] focus:outline-none rounded-[4px] px-3.5 py-2.5 font-sans text-base tracking-wider font-semibold"
                       placeholder="commander@brand.com"
                     />
                   </div>
@@ -1122,7 +1119,7 @@ export default function App() {
                       Estimated Urgent Deadline *
                     </label>
                     <select
-                      className="w-full bg-[#0A4A3D] border border-[#0E6B58]/35 text-white focus:border-[#D4F000] focus:outline-none rounded-[4px] px-3.5 py-2.5 font-sans text-xs tracking-wider cursor-pointer font-semibold"
+                      className="w-full bg-[#0A4A3D] border border-[#0E6B58]/35 text-white focus:border-[#D4F000] focus:outline-none rounded-[4px] px-3.5 py-2.5 font-sans text-base tracking-wider cursor-pointer font-semibold"
                     >
                       <option>Under 2 weeks (EXTREME EMERGENCY)</option>
                       <option>2-4 weeks (Urgently Launching)</option>
@@ -1139,7 +1136,7 @@ export default function App() {
                   <textarea
                     required
                     rows={4}
-                    className="w-full bg-[#0A4A3D] border border-[#0E6B58]/35 text-white focus:border-[#D4F000] focus:outline-none rounded-[4px] px-3.5 py-2.5 font-sans text-xs tracking-wider leading-relaxed font-semibold"
+                    className="w-full bg-[#0A4A3D] border border-[#0E6B58]/35 text-white focus:border-[#D4F000] focus:outline-none rounded-[4px] px-3.5 py-2.5 font-sans text-base tracking-wider leading-relaxed font-semibold"
                     placeholder="Describe exactly where the brand narrative is flatlining or what your last agency did wrong..."
                   />
                 </div>
