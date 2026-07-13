@@ -25,6 +25,7 @@ import VelluxiaVisualizer from './components/VelluxiaVisualizer';
 import GujaratPanthersVisualizer from './components/GujaratPanthersVisualizer';
 import BeingBeyondVisualizer from './components/BeingBeyondVisualizer';
 import QuotationDashboard from './components/QuotationDashboard';
+import ConsentBanner from './components/ConsentBanner';
 
 export default function App() {
   // Simple client-side routing state
@@ -1278,6 +1279,7 @@ export default function App() {
         </div>
       </footer>
 
+      <ConsentBanner />
     </div>
   );
 }
