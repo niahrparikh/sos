@@ -27,6 +27,7 @@ import BeingBeyondVisualizer from './components/BeingBeyondVisualizer';
 import QuotationDashboard from './components/QuotationDashboard';
 import ConsentBanner from './components/ConsentBanner';
 import { Analytics } from '@vercel/analytics/react';
+import SCOSViewer from './components/SCOSViewer';
 
 export default function App() {
   // Simple client-side routing state
@@ -95,8 +96,8 @@ export default function App() {
   // Terminal view states: 'normal' | 'minimized' | 'maximized' | 'closed'
   const [terminalState, setTerminalState] = useState<'normal' | 'minimized' | 'maximized' | 'closed'>('normal');
 
-  // Terminal navigation tab state: 'chat' | 'cases' | 'contact'
-  const [terminalTab, setTerminalTab] = useState<'chat' | 'cases' | 'contact'>('chat');
+  // Terminal navigation tab state: 'chat' | 'cases' | 'intelligence' | 'knowledge' | 'memory' | 'contact'
+  const [terminalTab, setTerminalTab] = useState<'chat' | 'cases' | 'intelligence' | 'knowledge' | 'memory' | 'contact'>('chat');
   // Selected case file inside the terminal case system
   const [selectedCaseId, setSelectedCaseId] = useState<string>('case-being-beyond');
 
@@ -219,8 +220,50 @@ export default function App() {
       const lower = text.toLowerCase().trim();
       let reply = '';
 
-      // Contact / Call / Email / Human
+      // SCOS / Operating System / Terminal Brain / Brain
       if (
+        lower.includes('scos') ||
+        lower.includes('operating system') ||
+        lower.includes('terminal brain') ||
+        lower.includes('brain')
+      ) {
+        reply = `DISPATCH: SOS Consulting Operating System (SCOS) is fully active inside this terminal. It powers our diagnostics and knowledge databases to provide instant growth audits. You can browse the verified files under the **Knowledge Base** tab.`;
+      }
+      // Intelligence / Consulting Method / Diagnosis
+      else if (
+        lower.includes('intelligence') ||
+        lower.includes('how you think') ||
+        lower.includes('judgment') ||
+        lower.includes('consulting philosophy') ||
+        lower.includes('belief') ||
+        lower.includes('philosophy')
+      ) {
+        reply = `DISPATCH: Under the SOS philosophy, we operate with a strict directive: **Business before marketing. Diagnosis before execution.**
+
+Most companies do not have a marketing problem; they have a core business bottleneck that appears as a marketing symptom. We focus on improving the quality of your commercial decisions.
+
+What growth bottleneck or commercial challenge is your brand currently facing?`;
+      }
+      // Diagnosis / Symptom / Root Cause / Bottleneck / Audit
+      else if (
+        lower.includes('diagnose') ||
+        lower.includes('diagnosis') ||
+        lower.includes('bottleneck') ||
+        lower.includes('symptom') ||
+        lower.includes('root cause') ||
+        lower.includes('audit')
+      ) {
+        reply = `DISPATCH: Prescribing recommendations without rigorous validation is irresponsible. We isolate symptoms from true root causes across 4 core domains:
+
+1. **Strategic Vector** (Is positioning or offer structure failing?)
+2. **Operational Vector** (Is sales execution, automation, or CRM tracking leaking revenue?)
+3. **Technical Vector** (Are user journeys, speed, or SEO discoverability limited?)
+4. **Commercial Vector** (Is customer acquisition cost outstripping lifetime value margins?)
+
+Tell me about your current growth patterns (e.g. high traffic but low conversions), and let's map the root constraint.`;
+      }
+      // Contact / Call / Email / Human
+      else if (
         lower.includes('contact') || 
         lower.includes('call') || 
         lower.includes('phone') || 
@@ -236,13 +279,13 @@ export default function App() {
         lower.includes('mumbai') ||
         lower.includes('location')
       ) {
-        reply = `DISPATCH: Connection direct to Emergency Response Unit. 
+        reply = `DISPATCH: When strategic depth or commercial scoping exceeds terminal limits, our escalation rules route your brief to a Senior Consultant. 
 
-📞 **HOTLINE**: +91 - 9099906631
-✉️ **EMAIL**: contact@sosagency.in
-📍 **STATION**: Lokhandwala, Mumbai, MH, India
+📞 **DIRECT CALL**: +91 - 9099906631
+✉️ **EMAIL DIRECTORY**: contact@sosagency.in
+📍 **STATION COORDINATES**: Lokhandwala, Mumbai, MH, India
 
-Call or email us directly, or scroll down to the **Offline Channel** form to submit a physical dispatch request. We respond within 120 minutes.`;
+You can also submit an offline request in the **Offline Channel** form below. We respond within 120 minutes.`;
       }
       // Services / Work / Capabilities
       else if (
@@ -261,15 +304,13 @@ Call or email us directly, or scroll down to the **Offline Channel** form to sub
         lower.includes('social') ||
         lower.includes('campaign')
       ) {
-        reply = `DISPATCH: Active tactical branding & digital advertising programs:
+        reply = `DISPATCH: SOS does not sell siloed execution tasks. We deploy integrated growth systems spanning:
+• **Strategic Architecture**: GTM strategy, brand positioning, and messaging.
+• **Creative Reconstruction**: Complete rebranding, graphic visual systems, and identity kits.
+• **Search & Advertising**: High-performance SEO and specialized AI Search Optimization (GEO/AEO).
+• **Technology**: High-conversion web assets, GA4 analytics setups, and automated HubSpot/CRM pipelines.
 
-• **Rescue Sprint** (Solo/small brands in acute crisis, 2-3 weeks)
-• **Full Rebrand** (For established entities outgrowing their identity, 6-8 weeks)
-• **Launch Kit** (For new brands starting from zero, 4-6 weeks)
-• **Brand Tune-Up** (High-intensity creative optimization, 3-4 weeks)
-• **Performance Marketing & Ads** (B2C customer acquisition, ongoing)
-
-Reply with the program you need to begin immediate diagnostics.`;
+We deliver these through hyper-focused **Rescue Sprints** (2-3 weeks) or complete **Brand Launch Kits** (6-8 weeks). Where is your current setup lacking strength?`;
       }
       // Pricing / Cost / Quote
       else if (
@@ -282,9 +323,11 @@ Reply with the program you need to begin immediate diagnostics.`;
         lower.includes('rate') || 
         lower.includes('fee')
       ) {
-        reply = `DISPATCH: All operations are customized based on current brand threat level and scope of deployment. 
+        reply = `DISPATCH: In compliance with our premium positioning and consulting methodology, we reject standardized price catalogs. 
 
-For an instant, detailed, structured cost estimation with fully customized line-items, click the **Quotation Suite** in the top menu or scroll to the **Offline Channel** form to file your brief. We'll deploy a tactical quotation blueprint immediately.`;
+All scopes are calculated dynamically based on diagnosed business threat levels, resource constraints, and expected commercial value. 
+
+To run an instant, customized cost estimation across our strategic options, access the **Quotation Suite** in the top navigation tab.`;
       }
       // Portfolio / Work / Proof
       else if (
@@ -298,32 +341,27 @@ For an instant, detailed, structured cost estimation with fully customized line-
         lower.includes('panthers') ||
         lower.includes('beyond')
       ) {
-        reply = `DISPATCH: Proof points are online in the database:
-
+        reply = `DISPATCH: Our verified Case Records are indexable within the adjacent **Cases** folder:
 • **Gujarat Panthers Visualizer**: Tactical visual reconstruction for the Pro Kabaddi League team.
 • **Being Beyond Wellness**: Calm visual identity system & packaging for holistic wellness.
 
-Scroll down to the **Proof Points** section of the website to view the full interactive design files and case breakdowns.`;
+You can browse these cases or scroll to the **Proof Points** section of the website to inspect full case files, raw layout designs, and strategic diagnostics.`;
       }
-      // Process / Method / Speed
+      // SaaS / B2B / D2C / Ecommerce / Industry
       else if (
-        lower.includes('process') || 
-        lower.includes('how') || 
-        lower.includes('step') || 
-        lower.includes('method') || 
-        lower.includes('timeline') || 
-        lower.includes('duration') || 
-        lower.includes('time') || 
-        lower.includes('deadline') || 
-        lower.includes('urgent') || 
-        lower.includes('fast')
+        lower.includes('saas') ||
+        lower.includes('b2b') ||
+        lower.includes('d2c') ||
+        lower.includes('ecommerce') ||
+        lower.includes('industry') ||
+        lower.includes('sector')
       ) {
-        reply = `DISPATCH: Tactical timing is prioritized. Depending on your selection:
-• Sprints take **2-3 weeks**.
-• Full rebranding launches in **6-8 weeks**.
-• For extreme emergencies, we have a **48-hour Creative Triage** protocol.
+        reply = `DISPATCH: We do not prescribe generic "best practices." Every industry runs on distinct economic cycles:
+• **SaaS**: Optimizing MRR velocity, trial-to-paid activation, and churn limits.
+• **B2B Services**: Accelerating sales pipeline deal size and account-based trust systems.
+• **D2C & E-Commerce**: Engineering customer acquisition cost (CAC) efficiency and repeat purchase frequency.
 
-Our process has zero fluff: **Diagnosis ➔ Strategy ➔ Creative Reconstruction ➔ Live Deployment**. Let us know if you need to accelerate.`;
+Let me know your model so I can align our diagnostic parameters.`;
       }
       // Socials
       else if (
@@ -333,12 +371,12 @@ Our process has zero fluff: **Diagnosis ➔ Strategy ➔ Creative Reconstruction
         lower.includes('social') || 
         lower.includes('handle')
       ) {
-        reply = `DISPATCH: Outbound channels verified:
+        reply = `DISPATCH: Outbound dispatch channels are verified and live:
 • **Instagram**: https://www.instagram.com/sosagency.in
 • **LinkedIn**: https://www.linkedin.com/company/sosagency
 • **Facebook**: https://www.facebook.com/sosagency
 
-Follow for brand emergency dispatch logs and behind-the-scenes strategy.`;
+Follow for live brand rescue dispatch logs and system updates.`;
       }
       // Greetings
       else if (
@@ -351,19 +389,18 @@ Follow for brand emergency dispatch logs and behind-the-scenes strategy.`;
         lower.includes('good afternoon') || 
         lower.includes('good evening')
       ) {
-        reply = `DISPATCH: Connection established. High-priority creative signal received. 
+        reply = `DISPATCH: Connection established. SOS Consulting Operating System (SCOS) is fully responsive.
 
-What brand emergency are we dealing with today? (e.g. need a *rebrand*, *better pricing info*, our *portfolio*, or *direct contact* with a human operator?)`;
+I am **Distress**, your AI Growth Consultant. How can we optimize your brand narrative or diagnose your growth bottlenecks today? (e.g. Ask me about our *consulting philosophy*, *brand diagnostics*, *pricing structures*, or how to *escalate to a human advisor*.)`;
       }
       // Fallback
       else {
-        reply = `DISPATCH: Signal acknowledged. To ensure we deploy the perfect creative response unit for your specific scenario:
+        reply = `DISPATCH: Signal recognized. To help us deploy the perfect creative response unit for your business:
+1. Review our **Knowledge Base** and **Cases** logs in the adjacent tabs.
+2. Reach our Hotline directly at **+91 - 9099906631** (contact@sosagency.in).
+3. Scroll down to file a structured dispatch request in the **Offline Channel** form.
 
-1. 📞 **Call Hotline**: +91 - 9099906631
-2. ✉️ **Email HQ**: contact@sosagency.in
-3. 📝 **Submit BRIEF**: Scroll down to the **Offline Channel** form to enter your brand details.
-
-Tell us more about your brand (e.g., are you launching a new company, or do you need to rescue a failing narrative?)`;
+Could you tell me a bit more about your business model and the primary roadblock you are looking to clear?`;
       }
 
       const botMsg: ChatMessageData = {
@@ -642,6 +679,20 @@ Tell us more about your brand (e.g., are you launching a new company, or do you 
                         }`}
                       >
                         📁 CLASSIFIED PROJECTS
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          playClickSound();
+                          setTerminalTab('knowledge');
+                        }}
+                        className={`px-3 py-1.5 font-sans text-[10px] md:text-xs font-extrabold uppercase tracking-wider border rounded-[4px] transition-all cursor-pointer ${
+                          terminalTab === 'knowledge'
+                            ? 'bg-[#D4F000] text-[#111111] border-transparent shadow-[0_0_8px_rgba(212,240,0,0.25)]'
+                            : 'bg-neutral-950 text-neutral-400 border-neutral-900 hover:text-[#D4F000] hover:border-[#D4F000]'
+                        }`}
+                      >
+                        📚 KNOWLEDGE BASE
                       </button>
                       <button
                         type="button"
@@ -932,6 +983,13 @@ Tell us more about your brand (e.g., are you launching a new company, or do you 
                             );
                           })()}
                         </div>
+                      </div>
+                    )}
+
+                    {/* TAB CONTENT: SCOS KNOWLEDGE */}
+                    {terminalTab === 'knowledge' && (
+                      <div className="flex-1 flex flex-col overflow-hidden">
+                        <SCOSViewer category="knowledge" />
                       </div>
                     )}
 
