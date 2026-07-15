@@ -28,6 +28,11 @@ import QuotationDashboard from './components/QuotationDashboard';
 import ConsentBanner from './components/ConsentBanner';
 import { Analytics } from '@vercel/analytics/react';
 import SCOSViewer from './components/SCOSViewer';
+import {
+  SCOS_INTELLIGENCE_BOOKS,
+  SCOS_KNOWLEDGE_BOOKS,
+  SCOS_MEMORY_BOOKS
+} from './data/scosData';
 
 export default function App() {
   // Simple client-side routing state
@@ -220,50 +225,108 @@ export default function App() {
       const lower = text.toLowerCase().trim();
       let reply = '';
 
-      // SCOS / Operating System / Terminal Brain / Brain
+      // Merge all books from the SCOS database
+      const ALL_SCOS_BOOKS = [
+        ...SCOS_INTELLIGENCE_BOOKS,
+        ...SCOS_KNOWLEDGE_BOOKS,
+        ...SCOS_MEMORY_BOOKS
+      ];
+
+      let bestMatch: {
+        bookId: string;
+        bookTitle: string;
+        heading: string;
+        content: string;
+        score: number;
+      } | null = null;
+
+      // Extract query words
+      const queryWords = lower
+        .replace(/[^\w\s]/g, ' ')
+        .split(/\s+/)
+        .filter((w) => w.length > 2);
+
+      ALL_SCOS_BOOKS.forEach((book) => {
+        const bookTitleLower = book.title.toLowerCase();
+        const bookPurposeLower = book.purpose.toLowerCase();
+        const bookIdLower = book.id.toLowerCase();
+
+        let bookBaseScore = 0;
+
+        // Massive boost if user explicitly refers to the book ID or number (e.g. "book 12", "book 04", "12")
+        const numMatch = lower.match(/\b(0?[1-9]|1[0-9])\b/);
+        if (numMatch) {
+          const parsedNum = numMatch[1].padStart(2, '0');
+          if (bookIdLower.endsWith(parsedNum)) {
+            bookBaseScore += 30;
+          }
+        }
+
+        queryWords.forEach((word) => {
+          if (bookTitleLower.includes(word)) bookBaseScore += 5;
+          if (bookPurposeLower.includes(word)) bookBaseScore += 2;
+          if (bookIdLower.includes(word)) bookBaseScore += 10;
+        });
+
+        // Search sections
+        book.sections.forEach((sec) => {
+          let score = bookBaseScore;
+          const headingLower = sec.heading.toLowerCase();
+          const contentLower = sec.content.toLowerCase();
+
+          if (lower.includes(headingLower) || headingLower.includes(lower)) {
+            score += 25;
+          }
+          if (contentLower.includes(lower)) {
+            score += 15;
+          }
+
+          queryWords.forEach((word) => {
+            if (headingLower.includes(word)) score += 8;
+            if (contentLower.includes(word)) score += 4;
+          });
+
+          if (score > 0 && (!bestMatch || score > bestMatch.score)) {
+            bestMatch = {
+              bookId: book.id,
+              bookTitle: book.title,
+              heading: sec.heading,
+              content: sec.content,
+              score
+            };
+          }
+        });
+
+        // Search modules
+        book.modules?.forEach((mod) => {
+          let score = bookBaseScore;
+          const modTitleLower = mod.title.toLowerCase();
+
+          if (lower.includes(modTitleLower) || modTitleLower.includes(lower)) {
+            score += 20;
+          }
+
+          queryWords.forEach((word) => {
+            if (modTitleLower.includes(word)) score += 6;
+            mod.items.forEach((item) => {
+              if (item.toLowerCase().includes(word)) score += 5;
+            });
+          });
+
+          if (score > 0 && (!bestMatch || score > bestMatch.score)) {
+            bestMatch = {
+              bookId: book.id,
+              bookTitle: book.title,
+              heading: `${book.id.toUpperCase()} · ${mod.title}`,
+              content: `Focus Areas:\n${mod.items.map(item => `• ${item}`).join('\n')}\n\n*This area of expertise belongs to the "${book.title}" framework.*`,
+              score
+            };
+          }
+        });
+      });
+
+      // Override priority keywords for specific, highly conversational requests
       if (
-        lower.includes('scos') ||
-        lower.includes('operating system') ||
-        lower.includes('terminal brain') ||
-        lower.includes('brain')
-      ) {
-        reply = `DISPATCH: SOS Consulting Operating System (SCOS) is fully active inside this terminal. It powers our diagnostics and knowledge databases to provide instant growth audits. You can browse the verified files under the **Knowledge Base** tab.`;
-      }
-      // Intelligence / Consulting Method / Diagnosis
-      else if (
-        lower.includes('intelligence') ||
-        lower.includes('how you think') ||
-        lower.includes('judgment') ||
-        lower.includes('consulting philosophy') ||
-        lower.includes('belief') ||
-        lower.includes('philosophy')
-      ) {
-        reply = `DISPATCH: Under the SOS philosophy, we operate with a strict directive: **Business before marketing. Diagnosis before execution.**
-
-Most companies do not have a marketing problem; they have a core business bottleneck that appears as a marketing symptom. We focus on improving the quality of your commercial decisions.
-
-What growth bottleneck or commercial challenge is your brand currently facing?`;
-      }
-      // Diagnosis / Symptom / Root Cause / Bottleneck / Audit
-      else if (
-        lower.includes('diagnose') ||
-        lower.includes('diagnosis') ||
-        lower.includes('bottleneck') ||
-        lower.includes('symptom') ||
-        lower.includes('root cause') ||
-        lower.includes('audit')
-      ) {
-        reply = `DISPATCH: Prescribing recommendations without rigorous validation is irresponsible. We isolate symptoms from true root causes across 4 core domains:
-
-1. **Strategic Vector** (Is positioning or offer structure failing?)
-2. **Operational Vector** (Is sales execution, automation, or CRM tracking leaking revenue?)
-3. **Technical Vector** (Are user journeys, speed, or SEO discoverability limited?)
-4. **Commercial Vector** (Is customer acquisition cost outstripping lifetime value margins?)
-
-Tell me about your current growth patterns (e.g. high traffic but low conversions), and let's map the root constraint.`;
-      }
-      // Contact / Call / Email / Human
-      else if (
         lower.includes('contact') || 
         lower.includes('call') || 
         lower.includes('phone') || 
@@ -280,39 +343,13 @@ Tell me about your current growth patterns (e.g. high traffic but low conversion
         lower.includes('location')
       ) {
         reply = `DISPATCH: When strategic depth or commercial scoping exceeds terminal limits, our escalation rules route your brief to a Senior Consultant. 
-
+        
 📞 **DIRECT CALL**: +91 - 9099906631
 ✉️ **EMAIL DIRECTORY**: contact@sosagency.in
 📍 **STATION COORDINATES**: Lokhandwala, Mumbai, MH, India
 
 You can also submit an offline request in the **Offline Channel** form below. We respond within 120 minutes.`;
       }
-      // Services / Work / Capabilities
-      else if (
-        lower.includes('service') || 
-        lower.includes('what do you do') || 
-        lower.includes('offer') || 
-        lower.includes('tier') || 
-        lower.includes('rescue') || 
-        lower.includes('sprint') || 
-        lower.includes('launch') || 
-        lower.includes('logo') || 
-        lower.includes('branding') || 
-        lower.includes('rebrand') ||
-        lower.includes('advertising') ||
-        lower.includes('marketing') ||
-        lower.includes('social') ||
-        lower.includes('campaign')
-      ) {
-        reply = `DISPATCH: SOS does not sell siloed execution tasks. We deploy integrated growth systems spanning:
-• **Strategic Architecture**: GTM strategy, brand positioning, and messaging.
-• **Creative Reconstruction**: Complete rebranding, graphic visual systems, and identity kits.
-• **Search & Advertising**: High-performance SEO and specialized AI Search Optimization (GEO/AEO).
-• **Technology**: High-conversion web assets, GA4 analytics setups, and automated HubSpot/CRM pipelines.
-
-We deliver these through hyper-focused **Rescue Sprints** (2-3 weeks) or complete **Brand Launch Kits** (6-8 weeks). Where is your current setup lacking strength?`;
-      }
-      // Pricing / Cost / Quote
       else if (
         lower.includes('price') || 
         lower.includes('pricing') || 
@@ -324,12 +361,11 @@ We deliver these through hyper-focused **Rescue Sprints** (2-3 weeks) or complet
         lower.includes('fee')
       ) {
         reply = `DISPATCH: In compliance with our premium positioning and consulting methodology, we reject standardized price catalogs. 
-
+        
 All scopes are calculated dynamically based on diagnosed business threat levels, resource constraints, and expected commercial value. 
 
 To run an instant, customized cost estimation across our strategic options, access the **Quotation Suite** in the top navigation tab.`;
       }
-      // Portfolio / Work / Proof
       else if (
         lower.includes('portfolio') || 
         lower.includes('work') || 
@@ -347,38 +383,6 @@ To run an instant, customized cost estimation across our strategic options, acce
 
 You can browse these cases or scroll to the **Proof Points** section of the website to inspect full case files, raw layout designs, and strategic diagnostics.`;
       }
-      // SaaS / B2B / D2C / Ecommerce / Industry
-      else if (
-        lower.includes('saas') ||
-        lower.includes('b2b') ||
-        lower.includes('d2c') ||
-        lower.includes('ecommerce') ||
-        lower.includes('industry') ||
-        lower.includes('sector')
-      ) {
-        reply = `DISPATCH: We do not prescribe generic "best practices." Every industry runs on distinct economic cycles:
-• **SaaS**: Optimizing MRR velocity, trial-to-paid activation, and churn limits.
-• **B2B Services**: Accelerating sales pipeline deal size and account-based trust systems.
-• **D2C & E-Commerce**: Engineering customer acquisition cost (CAC) efficiency and repeat purchase frequency.
-
-Let me know your model so I can align our diagnostic parameters.`;
-      }
-      // Socials
-      else if (
-        lower.includes('instagram') || 
-        lower.includes('linkedin') || 
-        lower.includes('facebook') || 
-        lower.includes('social') || 
-        lower.includes('handle')
-      ) {
-        reply = `DISPATCH: Outbound dispatch channels are verified and live:
-• **Instagram**: https://www.instagram.com/sosagency.in
-• **LinkedIn**: https://www.linkedin.com/company/sosagency
-• **Facebook**: https://www.facebook.com/sosagency
-
-Follow for live brand rescue dispatch logs and system updates.`;
-      }
-      // Greetings
       else if (
         lower.includes('hello') || 
         lower.includes('hi') || 
@@ -390,17 +394,31 @@ Follow for live brand rescue dispatch logs and system updates.`;
         lower.includes('good evening')
       ) {
         reply = `DISPATCH: Connection established. SOS Consulting Operating System (SCOS) is fully responsive.
-
+        
 I am **Distress**, your AI Growth Consultant. How can we optimize your brand narrative or diagnose your growth bottlenecks today? (e.g. Ask me about our *consulting philosophy*, *brand diagnostics*, *pricing structures*, or how to *escalate to a human advisor*.)`;
       }
-      // Fallback
-      else {
-        reply = `DISPATCH: Signal recognized. To help us deploy the perfect creative response unit for your business:
-1. Review our **Knowledge Base** and **Cases** logs in the adjacent tabs.
-2. Reach our Hotline directly at **+91 - 9099906631** (contact@sosagency.in).
-3. Scroll down to file a structured dispatch request in the **Offline Channel** form.
+      // If we got a strong database query match from our SCOS Books, return it directly!
+      else if (bestMatch && bestMatch.score >= 5) {
+        reply = `DISPATCH: Query matched in **${bestMatch.bookTitle}** [${bestMatch.bookId.toUpperCase()}] // Section: **${bestMatch.heading}**
+        
+${bestMatch.content}
 
-Could you tell me a bit more about your business model and the primary roadblock you are looking to clear?`;
+*Need more details on this topic or other growth strategies? Ask me any question, or type 'contact' to talk to a human consultant.*`;
+      }
+      // Weak matching fallback
+      else if (bestMatch && bestMatch.score >= 1) {
+        reply = `DISPATCH: Here is what we found in **${bestMatch.bookTitle}** [${bestMatch.bookId.toUpperCase()}] regarding your query:
+        
+**${bestMatch.heading}**:
+${bestMatch.content}
+
+*Ask me another question or let me know if you would like to connect with our senior team.*`;
+      }
+      // Hard fallback
+      else {
+        reply = `DISPATCH: Under SOS Consulting Operating System guidelines, every conversation should lead to commercial clarity. 
+        
+Could you describe your business model (e.g. SaaS, B2B services, E-commerce) or mention a specific growth challenge (e.g. positioning, conversion rate, lead volume) so I can query our knowledge base for a precise strategy?`;
       }
 
       const botMsg: ChatMessageData = {
