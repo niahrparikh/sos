@@ -303,7 +303,7 @@ Please generate the quotation.
       } catch (geminiError: any) {
         console.error('Gemini communication offline:', geminiError.message);
         return res.json({
-          reply: "📡 DISPATCH [SIGNAL DEGRADED]: Satellite link unestablished. Direct connection active: please call +91 - 9099906631 or email contact@sosagency.in.",
+          reply: "📡 DISPATCH [SIGNAL DEGRADED]: Satellite link unestablished. Direct connection active: please call +91 - 9099906631 or email sosagency.in@gmail.com.",
           error: geminiError.message
         });
       }
@@ -311,7 +311,7 @@ Please generate the quotation.
     } catch (err: any) {
       console.error('Chat API Error:', err);
       return res.json({
-        reply: "📡 DISPATCH [SIGNAL DEGRADED]: High traffic is temporarily affecting automated systems. Direct bypass recommended: call +91 - 9099906631 or email contact@sosagency.in.",
+        reply: "📡 DISPATCH [SIGNAL DEGRADED]: High traffic is temporarily affecting automated systems. Direct bypass recommended: call +91 - 9099906631 or email sosagency.in@gmail.com.",
         error: err.message
       });
     }

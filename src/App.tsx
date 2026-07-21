@@ -27,12 +27,12 @@ import BeingBeyondVisualizer from './components/BeingBeyondVisualizer';
 import QuotationDashboard from './components/QuotationDashboard';
 import ConsentBanner from './components/ConsentBanner';
 import { Analytics } from '@vercel/analytics/react';
-import SCOSViewer from './components/SCOSViewer';
 import {
   SCOS_INTELLIGENCE_BOOKS,
   SCOS_KNOWLEDGE_BOOKS,
   SCOS_MEMORY_BOOKS
 } from './data/scosData';
+import { queryConversationLibrary } from './data/conversationLibrary';
 
 export default function App() {
   // Simple client-side routing state
@@ -325,6 +325,9 @@ export default function App() {
         });
       });
 
+      // Match in SCOS Distress Conversation Library
+      const scenarioMatch = queryConversationLibrary(text);
+
       // Override priority keywords for specific, highly conversational requests
       if (
         lower.includes('contact') || 
@@ -345,7 +348,7 @@ export default function App() {
         reply = `DISPATCH: When strategic depth or commercial scoping exceeds terminal limits, our escalation rules route your brief to a Senior Consultant. 
         
 📞 **DIRECT CALL**: +91 - 9099906631
-✉️ **EMAIL DIRECTORY**: contact@sosagency.in
+✉️ **EMAIL DIRECTORY**: sosagency.in@gmail.com
 📍 **STATION COORDINATES**: Lokhandwala, Mumbai, MH, India
 
 You can also submit an offline request in the **Offline Channel** form below. We respond within 120 minutes.`;
@@ -363,7 +366,7 @@ You can also submit an offline request in the **Offline Channel** form below. We
         reply = `DISPATCH: In compliance with our premium positioning and consulting methodology, we reject standardized price catalogs. 
         
 All scopes are calculated dynamically based on diagnosed business threat levels, resource constraints, and expected commercial value. 
-
+ 
 To run an instant, customized cost estimation across our strategic options, access the **Quotation Suite** in the top navigation tab.`;
       }
       else if (
@@ -397,6 +400,27 @@ You can browse these cases or scroll to the **Proof Points** section of the webs
         
 I am **Distress**, your AI Growth Consultant. How can we optimize your brand narrative or diagnose your growth bottlenecks today? (e.g. Ask me about our *consulting philosophy*, *brand diagnostics*, *pricing structures*, or how to *escalate to a human advisor*.)`;
       }
+      // If we got a direct match in our Conversation Library, use it!
+      else if (scenarioMatch) {
+        reply = `DISPATCH: Incoming distress signal categorized under SCOS Library: **[${scenarioMatch.category.toUpperCase()}]** (Case File #${scenarioMatch.id})
+        
+🔍 **DIAGNOSIS PROFILE**:
+• **Target Profile**: ${scenarioMatch.persona} (${scenarioMatch.businessStage})
+• **Context**: ${scenarioMatch.industry} Sector
+• **Hidden Pain Point**: ${scenarioMatch.hiddenPainPoint}
+• **Likely Root Cause**: ${scenarioMatch.likelyRootCause}
+
+💡 **RECOMMENDED SERVICE**: ${scenarioMatch.recommendedService}
+🎯 **CONVERSATION GOAL**: ${scenarioMatch.conversationGoal}
+
+📢 **DISTRESS RESPONSE**:
+"${scenarioMatch.distressFirstResponse}"
+
+🙋 **FOLLOW-UP INVESTIGATION**:
+"${scenarioMatch.followUpQuestion}"
+
+🚨 *Under SCOS protocol, we are capturing: ${scenarioMatch.signalsToCapture.join(', ')}. If pricing or custom implementation is needed, Senior Consultant escalation rules apply.*`;
+      }
       // If we got a strong database query match from our SCOS Books, return it directly!
       else if (bestMatch && bestMatch.score >= 5) {
         reply = `DISPATCH: Query matched in **${bestMatch.bookTitle}** [${bestMatch.bookId.toUpperCase()}] // Section: **${bestMatch.heading}**
@@ -416,9 +440,21 @@ ${bestMatch.content}
       }
       // Hard fallback
       else {
-        reply = `DISPATCH: Under SOS Consulting Operating System guidelines, every conversation should lead to commercial clarity. 
-        
-Could you describe your business model (e.g. SaaS, B2B services, E-commerce) or mention a specific growth challenge (e.g. positioning, conversion rate, lead volume) so I can query our knowledge base for a precise strategy?`;
+        reply = `DISPATCH: Distress connection is active. No direct match found in our primary SCOS Intelligence libraries. 
+
+Please specify which operational vector or symptom you are currently diagnosing so we can query the appropriate runbook:
+• **Lead Generation** (Inbound drop, slowing pipeline)
+• **Branding** (Differentiation, visual identity, rebrands)
+• **SEO & Search** (Organic traffic drop, Google ranking)
+• **Website & CRO** (Poor conversions, landing page bounces)
+• **Paid Ads** (Meta/Google performance, ROAS drop, high CPC)
+• **Positioning** (Competitor comparison, price pressure)
+• **CRM & Sales** (Pipeline leaks, lead follow-up issues)
+• **Email Marketing** (Deliverability, spam, low opens)
+• **LinkedIn Authority** (Thought leadership, founder brand)
+• **AI & Workflows** (AI automation, manual process overload)
+
+Mention any of the keywords above, or say "contact" to speak directly to an expert.`;
       }
 
       const botMsg: ChatMessageData = {
@@ -698,20 +734,7 @@ Could you describe your business model (e.g. SaaS, B2B services, E-commerce) or 
                       >
                         📁 CLASSIFIED PROJECTS
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          playClickSound();
-                          setTerminalTab('knowledge');
-                        }}
-                        className={`px-3 py-1.5 font-sans text-[10px] md:text-xs font-extrabold uppercase tracking-wider border rounded-[4px] transition-all cursor-pointer ${
-                          terminalTab === 'knowledge'
-                            ? 'bg-[#D4F000] text-[#111111] border-transparent shadow-[0_0_8px_rgba(212,240,0,0.25)]'
-                            : 'bg-neutral-950 text-neutral-400 border-neutral-900 hover:text-[#D4F000] hover:border-[#D4F000]'
-                        }`}
-                      >
-                        📚 KNOWLEDGE BASE
-                      </button>
+
                       <button
                         type="button"
                         onClick={() => {
@@ -987,7 +1010,7 @@ Could you describe your business model (e.g. SaaS, B2B services, E-commerce) or 
                                 <div className="bg-[#0c0c0c] border border-neutral-900 p-3 flex flex-col sm:flex-row justify-between items-center gap-3">
                                   <div className="text-left">
                                     <span className="text-white font-bold text-[10px] uppercase tracking-wide block">DOES YOUR BRAND NEED EMERGENCY REPOSITIONING?</span>
-                                    <span className="text-[9px] text-neutral-400 font-mono">Bypass the line instantly. Dial +91 - 9099906631 or email contact@sosagency.in</span>
+                                    <span className="text-[9px] text-neutral-400 font-mono">Bypass the line instantly. Dial +91 - 9099906631 or email sosagency.in@gmail.com</span>
                                   </div>
                                   <button
                                     type="button"
@@ -1004,12 +1027,7 @@ Could you describe your business model (e.g. SaaS, B2B services, E-commerce) or 
                       </div>
                     )}
 
-                    {/* TAB CONTENT: SCOS KNOWLEDGE */}
-                    {terminalTab === 'knowledge' && (
-                      <div className="flex-1 flex flex-col overflow-hidden">
-                        <SCOSViewer category="knowledge" />
-                      </div>
-                    )}
+
 
                     {/* TAB CONTENT 3: DIRECT EMERGENCY CONTACT DETAILS */}
                     {terminalTab === 'contact' && (
@@ -1049,10 +1067,10 @@ Could you describe your business model (e.g. SaaS, B2B services, E-commerce) or 
                                 Queue pitch decks, current design assets, or custom distress guidelines directly onto our high-priority evaluation server.
                               </p>
                               <a
-                                href="mailto:contact@sosagency.in"
+                                href="mailto:sosagency.in@gmail.com"
                                 className="flex items-center gap-2 px-4 py-2.5 bg-neutral-950 hover:bg-neutral-900 text-white border border-neutral-800 hover:border-[#D4F000] font-bold uppercase tracking-widest text-center justify-center transition-all text-[10px]"
                               >
-                                <span>EMAIL: contact@sosagency.in</span>
+                                <span>EMAIL: sosagency.in@gmail.com</span>
                               </a>
                             </div>
                           </div>
@@ -1460,8 +1478,8 @@ Could you describe your business model (e.g. SaaS, B2B services, E-commerce) or 
                 </a>
               </li>
               <li>
-                <a href="mailto:contact@sosagency.in" className="hover:text-[#D4F000] transition-colors">
-                  EMAIL: CONTACT@SOSAGENCY.IN
+                <a href="mailto:sosagency.in@gmail.com" className="hover:text-[#D4F000] transition-colors">
+                  EMAIL: SOSAGENCY.IN@GMAIL.COM
                 </a>
               </li>
             </ul>

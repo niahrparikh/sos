@@ -895,7 +895,7 @@ export default function QuotationDashboard({ onBackToMain }: QuotationDashboardP
                     </p>
                     <p className="text-xs text-neutral-500 mt-2 font-sans">
                       SOS Agency Headquarters, Tower 10, Suite 404<br/>
-                      contact@sosagency.in | +91 - 9099906631
+                      sosagency.in@gmail.com | +91 - 9099906631
                     </p>
                   </div>
 

@@ -4,15 +4,15 @@ const DISPATCH_PROMPT = `You are DISPATCH, the AI operator for SOS Agency, a bol
 
 CONTACT INFO (Official SOS Agency Contact):
 - Phone / Hot line: +91 - 9099906631
-- Email: contact@sosagency.in
+- Email: sosagency.in@gmail.com
 
-Always share this exact phone number (+91 - 9099906631) or email (contact@sosagency.in) when visitors ask how to reach a human, how to contact us, or for contact coordinates.
+Always share this exact phone number (+91 - 9099906631) or email (sosagency.in@gmail.com) when visitors ask how to reach a human, how to contact us, or for contact coordinates.
 
 PERSONALITY: Confident specialist energy. Direct and efficient — one question at a time. Light humor only within rescue/dispatch theme, never about real emergencies or disasters. No corporate jargon.
 
 VOICE: Keep responses to 1-3 sentences. Terminal-chat pacing. No exclamation-heavy enthusiasm.
 
-JOB PRIORITY: 1) Make visitor feel understood 2) Qualify need/urgency/scope 3) Recommend the right service 4) Get email or push to call +91 - 9099906631 or email contact@sosagency.in 5) Never dead-end a conversation.
+JOB PRIORITY: 1) Make visitor feel understood 2) Qualify need/urgency/scope 3) Recommend the right service 4) Get email or push to call +91 - 9099906631 or email sosagency.in@gmail.com 5) Never dead-end a conversation.
 
 SERVICES:
 - Rescue Sprint: solo/small brands, contained problem, 2-3 weeks
@@ -20,7 +20,7 @@ SERVICES:
 - Second Opinion/Rescue Mission: fixing work from a previous agency/freelancer, starts with 1-week audit
 - Brand Tune-Up: brand is fine but wants sharper creative, 3-4 weeks
 
-GUARDRAILS: Redirect off-topic questions warmly back to branding. Never invent case studies, pricing, or client names. Never use fake urgency/scarcity. If a visitor is frustrated, drop the persona and help plainly. Always offer human escalation on request. High-intent signals (deadline under 4 weeks, "urgent," asks for a human, mentions being let down by prior agency) → immediately offer +91 - 9099906631 or contact@sosagency.in or [CALL US NOW].`;
+GUARDRAILS: Redirect off-topic questions warmly back to branding. Never invent case studies, pricing, or client names. Never use fake urgency/scarcity. If a visitor is frustrated, drop the persona and help plainly. Always offer human escalation on request. High-intent signals (deadline under 4 weeks, "urgent," asks for a human, mentions being let down by prior agency) → immediately offer +91 - 9099906631 or sosagency.in@gmail.com or [CALL US NOW].`;
 
 
 
@@ -67,7 +67,7 @@ export default async function handler(req: any, res: any) {
     const geminiKey = process.env.GEMINI_API_KEY;
     if (!geminiKey || geminiKey.trim() === '' || geminiKey.startsWith('dummy') || geminiKey.includes('YOUR')) {
       return res.json({
-        reply: "📡 DISPATCH [SIGNAL DEGRADED]: AI terminal is currently running in local standby mode. To activate full smart dispatch: please open the 'Secrets' panel in the AI Studio UI, verify your `GEMINI_API_KEY`, restart the server, and reboot this terminal. Direct emergency dial is active: call +91 - 9099906631 or email contact@sosagency.in.",
+        reply: "📡 DISPATCH [SIGNAL DEGRADED]: AI terminal is currently running in local standby mode. To activate full smart dispatch: please open the 'Secrets' panel in the AI Studio UI, verify your `GEMINI_API_KEY`, restart the server, and reboot this terminal. Direct emergency dial is active: call +91 - 9099906631 or email sosagency.in@gmail.com.",
         error: "Missing or unconfigured GEMINI_API_KEY."
       });
     }
@@ -101,7 +101,7 @@ export default async function handler(req: any, res: any) {
     } catch (geminiError: any) {
       console.error('Gemini API Call Failed:', geminiError.message);
       return res.json({
-        reply: "📡 DISPATCH [SIGNAL FAULT]: The AI communication satellite experienced a momentary glitch. Please verify your `GEMINI_API_KEY` in the Secrets panel, or contact our support grid at +91 - 9099906631 / contact@sosagency.in.",
+        reply: "📡 DISPATCH [SIGNAL FAULT]: The AI communication satellite experienced a momentary glitch. Please verify your `GEMINI_API_KEY` in the Secrets panel, or contact our support grid at +91 - 9099906631 / sosagency.in@gmail.com.",
         error: geminiError.message
       });
     }
@@ -109,7 +109,7 @@ export default async function handler(req: any, res: any) {
   } catch (err: any) {
     console.error('Chat API Error:', err);
     return res.json({
-      reply: "📡 DISPATCH [SIGNAL DEGRADED]: High traffic is temporarily affecting automated systems. Direct bypass recommended: call +91 - 9099906631 or email contact@sosagency.in.",
+      reply: "📡 DISPATCH [SIGNAL DEGRADED]: High traffic is temporarily affecting automated systems. Direct bypass recommended: call +91 - 9099906631 or email sosagency.in@gmail.com.",
       error: err.message
     });
   }
