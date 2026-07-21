@@ -216,11 +216,12 @@ export default function App() {
       timestamp: getTimestamp(),
     };
 
-    setMessages((prev) => [...prev, userMsg]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setIsTyping(true);
     setMessageCount((prev) => prev + 1);
 
-    // 2. Resolve response locally (instant, fully reliable, zero-API dependency)
+    // Completely client-side, offline resolver (Zero API latency, fully deterministic and custom-fed)
     setTimeout(() => {
       const lower = text.toLowerCase().trim();
       let reply = '';
@@ -345,13 +346,14 @@ export default function App() {
         lower.includes('mumbai') ||
         lower.includes('location')
       ) {
-        reply = `DISPATCH: When strategic depth or commercial scoping exceeds terminal limits, our escalation rules route your brief to a Senior Consultant. 
-        
-📞 **DIRECT CALL**: +91 - 9099906631
-✉️ **EMAIL DIRECTORY**: sosagency.in@gmail.com
-📍 **STATION COORDINATES**: Lokhandwala, Mumbai, MH, India
+        reply = `If you would like to map out a custom strategy or discuss implementation, speaking with our senior team is the quickest route.
 
-You can also submit an offline request in the **Offline Channel** form below. We respond within 120 minutes.`;
+Here is how you can reach us directly:
+• 📞 **Hotline / Direct Call**: +91 - 9099906631
+• ✉️ **Email Directory**: sosagency.in@gmail.com
+• 📍 **Station Coordinates**: Lokhandwala, Mumbai, MH, India
+
+You can also submit an offline request in the **Offline Channel** form right below this chat. We generally respond to briefs within 120 minutes. What is the core challenge you'd like us to tackle together?`;
       }
       else if (
         lower.includes('price') || 
@@ -363,11 +365,11 @@ You can also submit an offline request in the **Offline Channel** form below. We
         lower.includes('rate') || 
         lower.includes('fee')
       ) {
-        reply = `DISPATCH: In compliance with our premium positioning and consulting methodology, we reject standardized price catalogs. 
-        
-All scopes are calculated dynamically based on diagnosed business threat levels, resource constraints, and expected commercial value. 
- 
-To run an instant, customized cost estimation across our strategic options, access the **Quotation Suite** in the top navigation tab.`;
+        reply = `The investment depends entirely on the business, goals, and scope. Rather than forcing you into predefined packages, we'd rather understand your situation and recommend only what's likely to create meaningful business impact.
+
+If you want an instant, custom cost estimate across our strategic options, feel free to use the **Quotation Suite** in the tab above. 
+
+Otherwise, could you tell me a bit about what business you run and where you feel stuck? Let's trace the root cause first.`;
       }
       else if (
         lower.includes('portfolio') || 
@@ -380,11 +382,13 @@ To run an instant, customized cost estimation across our strategic options, acce
         lower.includes('panthers') ||
         lower.includes('beyond')
       ) {
-        reply = `DISPATCH: Our verified Case Records are indexable within the adjacent **Cases** folder:
+        reply = `We have verified Case Records indexable within the adjacent **Cases** tab:
 • **Gujarat Panthers Visualizer**: Tactical visual reconstruction for the Pro Kabaddi League team.
 • **Being Beyond Wellness**: Calm visual identity system & packaging for holistic wellness.
 
-You can browse these cases or scroll to the **Proof Points** section of the website to inspect full case files, raw layout designs, and strategic diagnostics.`;
+You can inspect full case files, raw layouts, and strategic diagnostics there or by scrolling to the **Proof Points** section of this screen.
+
+What kind of business do you run, and are you trying to solve a creative identity challenge or a digital performance bottleneck?`;
       }
       else if (
         lower.includes('hello') || 
@@ -396,65 +400,49 @@ You can browse these cases or scroll to the **Proof Points** section of the webs
         lower.includes('good afternoon') || 
         lower.includes('good evening')
       ) {
-        reply = `DISPATCH: Connection established. SOS Consulting Operating System (SCOS) is fully responsive.
-        
-I am **Distress**, your AI Growth Consultant. How can we optimize your brand narrative or diagnose your growth bottlenecks today? (e.g. Ask me about our *consulting philosophy*, *brand diagnostics*, *pricing structures*, or how to *escalate to a human advisor*.)`;
+        reply = `Hello. I am **Distress**, the AI Growth Consultant at SOS Agency.
+
+My job is to help founders, business owners, and marketers solve growth bottlenecks. I start with understanding rather than generic tactics.
+
+What is the biggest commercial challenge or growth block you are facing in your business right now?`;
       }
       // If we got a direct match in our Conversation Library, use it!
       else if (scenarioMatch) {
-        reply = `DISPATCH: Incoming distress signal categorized under SCOS Library: **[${scenarioMatch.category.toUpperCase()}]** (Case File #${scenarioMatch.id})
-        
-🔍 **DIAGNOSIS PROFILE**:
-• **Target Profile**: ${scenarioMatch.persona} (${scenarioMatch.businessStage})
-• **Context**: ${scenarioMatch.industry} Sector
-• **Hidden Pain Point**: ${scenarioMatch.hiddenPainPoint}
-• **Likely Root Cause**: ${scenarioMatch.likelyRootCause}
+        reply = `${scenarioMatch.distressFirstResponse}
 
-💡 **RECOMMENDED SERVICE**: ${scenarioMatch.recommendedService}
-🎯 **CONVERSATION GOAL**: ${scenarioMatch.conversationGoal}
+${scenarioMatch.followUpQuestion}
 
-📢 **DISTRESS RESPONSE**:
-"${scenarioMatch.distressFirstResponse}"
-
-🙋 **FOLLOW-UP INVESTIGATION**:
-"${scenarioMatch.followUpQuestion}"
-
-🚨 *Under SCOS protocol, we are capturing: ${scenarioMatch.signalsToCapture.join(', ')}. If pricing or custom implementation is needed, Senior Consultant escalation rules apply.*`;
+*(Note: In a live audit, we will typically examine your: ${scenarioMatch.signalsToCapture.join(', ')}. If you require custom implementation or detailed budgets, we can coordinate a direct handoff to our senior team at any point.)*`;
       }
       // If we got a strong database query match from our SCOS Books, return it directly!
       else if (bestMatch && bestMatch.score >= 5) {
-        reply = `DISPATCH: Query matched in **${bestMatch.bookTitle}** [${bestMatch.bookId.toUpperCase()}] // Section: **${bestMatch.heading}**
-        
+        reply = `Here is some relevant perspective from our **${bestMatch.bookTitle}** framework under **${bestMatch.heading}**:
+
 ${bestMatch.content}
 
-*Need more details on this topic or other growth strategies? Ask me any question, or type 'contact' to talk to a human consultant.*`;
+How does this relate to what you are currently seeing in your business? Tell me a bit about your current setup, and let's find the root constraint together.`;
       }
       // Weak matching fallback
       else if (bestMatch && bestMatch.score >= 1) {
-        reply = `DISPATCH: Here is what we found in **${bestMatch.bookTitle}** [${bestMatch.bookId.toUpperCase()}] regarding your query:
-        
-**${bestMatch.heading}**:
+        reply = `Regarding your query, here is what we have documented in the **${bestMatch.bookTitle}** framework under **${bestMatch.heading}**:
+
 ${bestMatch.content}
 
-*Ask me another question or let me know if you would like to connect with our senior team.*`;
+What specific outcome are you hoping to improve in this area? Let me know so I can offer more tailored recommendations.`;
       }
       // Hard fallback
       else {
-        reply = `DISPATCH: Distress connection is active. No direct match found in our primary SCOS Intelligence libraries. 
+        reply = `I'd love to help diagnose what is happening in your business, but I'll need a bit more context. 
 
-Please specify which operational vector or symptom you are currently diagnosing so we can query the appropriate runbook:
-• **Lead Generation** (Inbound drop, slowing pipeline)
-• **Branding** (Differentiation, visual identity, rebrands)
-• **SEO & Search** (Organic traffic drop, Google ranking)
-• **Website & CRO** (Poor conversions, landing page bounces)
-• **Paid Ads** (Meta/Google performance, ROAS drop, high CPC)
-• **Positioning** (Competitor comparison, price pressure)
-• **CRM & Sales** (Pipeline leaks, lead follow-up issues)
-• **Email Marketing** (Deliverability, spam, low opens)
-• **LinkedIn Authority** (Thought leadership, founder brand)
-• **AI & Workflows** (AI automation, manual process overload)
+Are you currently looking to solve a challenge in one of these core vectors?
+• **Lead Generation & Pipeline** (low inbound, slowing pipeline)
+• **Branding & Positioning** (competing on price, looking like everyone else)
+• **SEO & AI Search** (organic traffic flat or dropping)
+• **Website & Conversion** (high traffic but poor sales)
+• **Paid Acquisition** (Meta or Google Ads ROAS dropping)
+• **AI & Workflows** (repetitive manual tasks eating team hours)
 
-Mention any of the keywords above, or say "contact" to speak directly to an expert.`;
+Tell me a bit about what business you run and where the bottleneck is, and we can isolate the root cause together.`;
       }
 
       const botMsg: ChatMessageData = {
@@ -465,7 +453,7 @@ Mention any of the keywords above, or say "contact" to speak directly to an expe
       };
       setMessages((prev) => [...prev, botMsg]);
       setIsTyping(false);
-    }, 1000);
+    }, 700);
   };
 
   // Contact form submission state
